@@ -51,14 +51,4 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
-	WorldTransform worldT_;
-	std::unique_ptr<DebugCamera> camera_;
-
-	uint32_t gh_;
-	Vector2 spritePos_;
-	std::unique_ptr<Sprite> sprite_;
-	std::unique_ptr<Model> model_;
-
-	uint32_t sh_;
-	uint32_t vh_;
 };
