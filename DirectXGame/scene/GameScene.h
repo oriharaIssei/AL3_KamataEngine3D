@@ -5,8 +5,11 @@
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
+#include "DebugCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+
+#include "memory"
 
 /// <summary>
 /// ゲームシーン
@@ -47,4 +50,15 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	WorldTransform worldT_;
+	std::unique_ptr<DebugCamera> camera_;
+
+	uint32_t gh_;
+	Vector2 spritePos_;
+	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Model> model_;
+
+	uint32_t sh_;
+	uint32_t vh_;
 };
