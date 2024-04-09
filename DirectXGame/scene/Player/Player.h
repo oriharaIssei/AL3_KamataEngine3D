@@ -25,7 +25,9 @@ public:
 	void Draw(const ViewProjection& viewProj);
 
 private:
-	std::unique_ptr<Model> model_;
-	uint32_t th_;
 	WorldTransform worldTransform_;
+
+	std::unique_ptr<Model> model_;
+	const float kSpeed = 0.2f;
+	uint32_t th_;
 };

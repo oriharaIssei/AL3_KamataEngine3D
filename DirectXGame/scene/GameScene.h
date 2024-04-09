@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
-#include "DebugCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
@@ -53,6 +53,8 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	std::unique_ptr<DebugCamera> camera_;
+	bool isDebugCameraActive_ = false;
+	ViewProjection viewProj_;
 
 	std::unique_ptr<Player> player_;
 };
