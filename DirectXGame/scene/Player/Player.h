@@ -1,9 +1,13 @@
 #pragma once
 
+#include "Input.h"
+
+#include "Bullet/PlayerBullet.h"
 #include "Model.h"
-#include <memory>
 
 #include "WorldTransform.h"
+
+#include <memory>
 
 class Player {
 public:
@@ -25,9 +29,27 @@ public:
 	void Draw(const ViewProjection& viewProj);
 
 private:
+	/// <summary>
+	/// 旋回
+	/// </summary>
+	void Rotate();
+
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
+
+private:
+	Input* input_ = nullptr;
+
 	WorldTransform worldTransform_;
 
+	std::unique_ptr<PlayerBullet> bullet_ = nullptr;
 	std::unique_ptr<Model> model_;
+
 	const float kSpeed = 0.2f;
+	// 旋回スピード
+	const float kRotSpeed_ = 0.02f;
+
 	uint32_t th_;
 };
