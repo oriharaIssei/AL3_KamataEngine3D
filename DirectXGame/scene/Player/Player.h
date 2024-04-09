@@ -52,6 +52,8 @@ private:
 	const float kSpeed = 0.2f;
 	// 旋回スピード
 	const float kRotSpeed_ = 0.02f;
+	// 弾の速度
+	const float kBuletSpeed_ = 1.0f;
 
 	uint32_t th_;
 };

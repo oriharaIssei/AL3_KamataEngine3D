@@ -15,13 +15,23 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="pos">出現位置</param>
-	void Init(Model* model,const Vector3& pos);
+	/// <param name="velocity>速度</param>
+	void Init(Model* model,const Vector3& pos,const Vector3& velocity);
 	
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
 private:
 	std::unique_ptr<Model> model_;
+
 	WorldTransform worldTransform_;
+	Vector3 velocity_;
+
+	static const int32_t kLifeTime_ = 60 * 5;
+	int32_t deathTimer_ = kLifeTime_;
+	bool isDead_ = false;
+
 	uint32_t th_;
+public:
+	bool IsDead() const { return isDead_; }
 };

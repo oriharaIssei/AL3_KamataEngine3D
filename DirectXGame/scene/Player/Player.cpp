@@ -4,7 +4,7 @@
 #include <cassert>
 
 Player::~Player() {
-	for (auto& bullet:bullets_) {
+	for (auto& bullet : bullets_) {
 		bullet.release();
 	}
 }
@@ -20,6 +20,11 @@ void Player::Init(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
+	//===============================================
+	// 古い弾の削除
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead() ? true : false; });
+	//===============================================
+
 	//===============================================
 	// キーボード入力 による 移動
 
@@ -93,7 +98,9 @@ void Player::Rotate() {
 void Player::Attack() {
 	if (input_->TriggerKey(DIK_W)) {
 		bullets_.push_back(std::make_unique<PlayerBullet>());
-		bullets_.back()->Init(Model::Create(), worldTransform_.translation_);
+		// 速度 と player の 向き を合わせる(回転させる)
+		Vector3 velocity = TransformNormal({0.0f, 0.0f, kBuletSpeed_}, worldTransform_.matWorld_);
+		bullets_.back()->Init(Model::Create(), worldTransform_.translation_, velocity);
 	}
 
 	for (auto& bullet : bullets_) {

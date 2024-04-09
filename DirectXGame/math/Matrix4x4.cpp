@@ -50,7 +50,6 @@ Matrix4x4 Matrix4x4::operator*(const float& scalar) const {
 	return result;
 }
 
-
 Matrix4x4 Matrix4x4::Transpose() {
 	Matrix4x4 result;
 	for (int row = 0; row < 4; row++) {
@@ -154,6 +153,17 @@ Vector3 Transform(const Vector3& vec, const Matrix4x4& matrix) {
 
 	assert(result[3] != 0.0f);
 	return Vector3(result[0] / result[3], result[1] / result[3], result[2] / result[3]);
+}
+
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
+	// 平行移動を無視して計算
+	Vector3 result = {
+	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
+	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
+	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
+	};
+
+	return result;
 }
 
 Matrix4x4 MakeMatrix::PerspectiveFov(const float& fovY, const float& aspectRatio, const float& nearClip, const float& farClip) {

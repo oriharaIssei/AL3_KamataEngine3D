@@ -41,3 +41,4 @@ Matrix4x4 ViewPort(const float& left, const float& top, const float& width, cons
 } // namespace MakeMatrix
 
 Vector3 Transform(const Vector3& vec, const Matrix4x4& matrix);
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
