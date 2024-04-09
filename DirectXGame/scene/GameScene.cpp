@@ -15,12 +15,13 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	camera_ = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
 	
+	player_=std::make_unique<Player>();
+	player_->Init(Model::Create(),TextureManager::Load("sample.png"));
 }
 
-void GameScene::Update() {
-
-}
+void GameScene::Update() { camera_->Update(); }
 
 void GameScene::Draw() {
 
@@ -35,7 +36,6 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -49,8 +49,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
 
+	player_->Draw(camera_->GetViewProjection());
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
