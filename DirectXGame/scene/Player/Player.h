@@ -7,11 +7,13 @@
 
 #include "WorldTransform.h"
 
+#include <list>
 #include <memory>
 
 class Player {
 public:
 	Player() = default;
+	~Player();
 
 	/// <summary>
 	/// 初期化
@@ -44,7 +46,7 @@ private:
 
 	WorldTransform worldTransform_;
 
-	std::unique_ptr<PlayerBullet> bullet_ = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	std::unique_ptr<Model> model_;
 
 	const float kSpeed = 0.2f;

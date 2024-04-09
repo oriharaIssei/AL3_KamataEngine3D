@@ -3,6 +3,12 @@
 #include "ImGuiManager.h"
 #include <cassert>
 
+Player::~Player() {
+	for (auto& bullet:bullets_) {
+		bullet.release();
+	}
+}
+
 void Player::Init(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	assert(model);
@@ -71,8 +77,8 @@ void Player::Update() {
 void Player::Draw(const ViewProjection& viewProj) {
 	model_->Draw(worldTransform_, viewProj, th_);
 	// 弾があれば描画
-	if (bullet_!=nullptr) {
-		bullet_->Draw(viewProj);
+	for (auto& bullet : bullets_) {
+		bullet->Draw(viewProj);
 	}
 }
 
@@ -86,11 +92,11 @@ void Player::Rotate() {
 
 void Player::Attack() {
 	if (input_->TriggerKey(DIK_W)) {
-		bullet_.reset(new PlayerBullet());
-		bullet_->Init(Model::Create(), worldTransform_.translation_);
+		bullets_.push_back(std::make_unique<PlayerBullet>());
+		bullets_.back()->Init(Model::Create(), worldTransform_.translation_);
 	}
 
-	if (bullet_) {
-		bullet_->Update();
+	for (auto& bullet : bullets_) {
+		bullet->Update();
 	}
 }
