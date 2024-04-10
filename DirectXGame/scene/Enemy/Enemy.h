@@ -18,10 +18,13 @@ public:
 	void Init(const Vector3& pos);
 	void Update();
 	void Draw(const ViewProjection& viewProj);
-
+	
 private:
+	static void (Enemy::*updatesTable[])();
+
 	void ApproachUpdate();
 	void LeaveUpdate();
+
 private:
 	WorldTransform worldTransform_;
 	const float kSpeed_ = 0.2f;

@@ -1,6 +1,9 @@
 #include "Enemy.h"
 
 #include "TextureManager.h"
+#include <ImGuiManager.h>
+
+void (Enemy::*Enemy::updatesTable[])() = {&Enemy::ApproachUpdate, &Enemy::LeaveUpdate};
 
 void Enemy::Init(const Vector3& pos) {
 	model_.reset(Model::Create());
@@ -14,24 +17,23 @@ void Enemy::Init(const Vector3& pos) {
 }
 
 void Enemy::Update() {
-	switch (phase_) {
-	case Phase::Approach:
-		ApproachUpdate();
-		break;
-	case Phase::Leave:
-		LeaveUpdate();
-		break;
-	default:
-		break;
-	}
+	(this->*updatesTable[static_cast<size_t>(phase_)])();
+
 	worldTransform_.UpdateMatrix();
+
+#ifdef _DEBUG
+	ImGui::Begin("Enemy");
+	ImGui::Text("Position :\nX %.2f \n Y %.2f \n Z %.2f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	ImGui::Text("Current Phase : %s", phase_ == Phase::Approach ? "Approach" : "Leave");
+	ImGui::End();
+#endif // _DEBUG
 }
 
 void Enemy::Draw(const ViewProjection& viewProj) { model_->Draw(worldTransform_, viewProj, th_); }
 
 void Enemy::ApproachUpdate() {
 	//========================================
-		//	移動
+	//	移動
 	worldTransform_.translation_ += {0.0f, 0.0f, -kSpeed_};
 
 	//========================================
