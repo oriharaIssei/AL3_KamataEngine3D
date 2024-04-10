@@ -12,6 +12,9 @@
 
 #include "EnemyBullet.h"
 
+#include "TimedCall.h"
+
+
 enum class Phase { Approach, Leave };
 class Enemy;
 class BaseEnemyState {
@@ -58,6 +61,9 @@ public:
 	void InitOnApproach();
 	void Fire();
 
+	void UpdateTimedCalls();
+	void ClearTimedCalls() { timedCalls_.clear(); }
+
 public:
 	static const uint32_t kFierInterval;
 
@@ -69,6 +75,7 @@ private:
 
 	std::unique_ptr<BaseEnemyState> state_;
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	std::list<std::unique_ptr<TimedCall<void,void>>> timedCalls_;
 
 	int32_t fireTimer_ = 0;
 
