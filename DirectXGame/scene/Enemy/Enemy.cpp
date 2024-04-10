@@ -12,12 +12,35 @@ void Enemy::Init(const Vector3& pos) {
 }
 
 void Enemy::Update() {
-	//========================================
-	//	移動
-	worldTransform_.translation_ -= {0.0f, 0.0f, kSpeed_};
-
+	switch (phase_) {
+	case Phase::Approach:
+		ApproachUpdate();
+		break;
+	case Phase::Leave:
+		LeaveUpdate();
+		break;
+	default:
+		break;
+	}
 	worldTransform_.UpdateMatrix();
-	//========================================
 }
 
 void Enemy::Draw(const ViewProjection& viewProj) { model_->Draw(worldTransform_, viewProj, th_); }
+
+void Enemy::ApproachUpdate() {
+	//========================================
+		//	移動
+	worldTransform_.translation_ += {0.0f, 0.0f, -kSpeed_};
+
+	//========================================
+	if (worldTransform_.translation_.z <= 1.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::LeaveUpdate() {
+	//========================================
+	//	移動
+	worldTransform_.translation_ += {kSpeed_, kSpeed_, -kSpeed_};
+	//========================================
+}

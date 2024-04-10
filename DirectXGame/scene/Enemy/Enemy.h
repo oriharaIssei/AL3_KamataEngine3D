@@ -8,6 +8,11 @@
 
 #include <memory>
 
+enum class Phase {
+	Approach,
+	Leave
+};
+
 class Enemy {
 public:
 	void Init(const Vector3& pos);
@@ -15,10 +20,15 @@ public:
 	void Draw(const ViewProjection& viewProj);
 
 private:
+	void ApproachUpdate();
+	void LeaveUpdate();
+private:
 	WorldTransform worldTransform_;
-	const float kSpeed_ = 0.2f;
+	const float kSpeed_ = 0.4f;
 
 	std::unique_ptr<Model> model_ = nullptr;
+
+	Phase phase_ = Phase::Approach;
 
 	uint32_t th_;
 };
