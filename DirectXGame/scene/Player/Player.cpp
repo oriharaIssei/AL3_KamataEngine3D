@@ -35,15 +35,15 @@ void Player::Update() {
 	Vector3 move = {0.0f, 0.0f, 0.0f};
 	// x 軸
 	if (input_->PushKey(DIK_LEFT)) {
-		move.x -= kSpeed;
+		move.x -= kSpeed_;
 	} else if (input_->PushKey(DIK_RIGHT)) {
-		move.x += kSpeed;
+		move.x += kSpeed_;
 	}
 	// y 軸
 	if (input_->PushKey(DIK_UP)) {
-		move.y += kSpeed;
+		move.y += kSpeed_;
 	} else if (input_->PushKey(DIK_DOWN)) {
-		move.y -= kSpeed;
+		move.y -= kSpeed_;
 	}
 
 	worldTransform_.translation_ += move;

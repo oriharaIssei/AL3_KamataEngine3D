@@ -49,7 +49,7 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	std::unique_ptr<Model> model_;
 
-	const float kSpeed = 0.2f;
+	const float kSpeed_ = 0.2f;
 	// 旋回スピード
 	const float kRotSpeed_ = 0.02f;
 	// 弾の速度

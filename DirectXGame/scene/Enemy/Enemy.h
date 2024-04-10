@@ -5,8 +5,12 @@
 #include "Vector3.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include <stdint.h>
 
+#include <list>
 #include <memory>
+
+#include "EnemyBullet.h"
 
 enum class Phase { Approach, Leave };
 class Enemy;
@@ -40,7 +44,7 @@ public:
 	void Update() override;
 
 private:
-	Vector3 velocity = {-0.5f, 0.5f, 0.0f};
+	Vector3 velocity = {0.5f, 0.3f, 0.0f};
 };
 
 class Enemy {
@@ -51,6 +55,12 @@ public:
 
 	void ChangeState(BaseEnemyState* nextState);
 
+	void InitOnApproach();
+	void Fire();
+
+public:
+	static const uint32_t kFierInterval;
+
 private:
 	WorldTransform worldTransform_;
 	const float kSpeed_ = 0.2f;
@@ -58,6 +68,9 @@ private:
 	std::unique_ptr<Model> model_ = nullptr;
 
 	std::unique_ptr<BaseEnemyState> state_;
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+
+	int32_t fireTimer_ = 0;
 
 	uint32_t th_;
 
@@ -65,4 +78,3 @@ public:
 	const Vector3& getPos() const { return worldTransform_.translation_; }
 	void setPos(const Vector3& pos) { worldTransform_.translation_ = pos; }
 };
-

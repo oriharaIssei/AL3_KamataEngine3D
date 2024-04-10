@@ -110,6 +110,7 @@
     <ClCompile Include="3d\WorldTransformEx.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="scene\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="scene\Bullet\PlayerBullet.cpp" />
     <ClCompile Include="scene\Enemy\Enemy.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="base\StringUtility.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="scene\Bullet\EnemyBullet.h" />
     <ClInclude Include="scene\Bullet\PlayerBullet.h" />
     <ClInclude Include="scene\Enemy\Enemy.h" />
     <ClInclude Include="scene\Player\Player.h" />
