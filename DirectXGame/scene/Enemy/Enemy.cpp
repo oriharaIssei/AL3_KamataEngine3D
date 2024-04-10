@@ -8,6 +8,8 @@ void Enemy::Init(const Vector3& pos) {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
 
+	phase_ = Phase::Approach;
+
 	th_ = TextureManager::Load("cute_cat.png");
 }
 

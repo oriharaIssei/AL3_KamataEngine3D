@@ -52,6 +52,7 @@ void GameScene::Update() {
 #endif
 
 	player_->Update();
+	
 	enemy_->Update();
 }
 

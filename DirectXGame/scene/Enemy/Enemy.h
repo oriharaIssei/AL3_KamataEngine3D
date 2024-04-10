@@ -24,7 +24,7 @@ private:
 	void LeaveUpdate();
 private:
 	WorldTransform worldTransform_;
-	const float kSpeed_ = 0.4f;
+	const float kSpeed_ = 0.2f;
 
 	std::unique_ptr<Model> model_ = nullptr;
 
