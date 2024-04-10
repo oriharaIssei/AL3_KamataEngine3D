@@ -2,8 +2,8 @@
 
 #include "Input.h"
 
-#include "Bullet/PlayerBullet.h"
 #include "Model.h"
+#include "PlayerBullet.h"
 
 #include "WorldTransform.h"
 

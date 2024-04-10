@@ -11,7 +11,8 @@
 
 #include <memory>
 
-#include "Player/Player.h"
+#include "Enemy.h"
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -57,4 +58,5 @@ private: // メンバ変数
 	ViewProjection viewProj_;
 
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<Enemy> enemy_;
 };

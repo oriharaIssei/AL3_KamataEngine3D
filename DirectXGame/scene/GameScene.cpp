@@ -23,6 +23,9 @@ void GameScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	player_->Init(Model::Create(), TextureManager::Load("sample.png"));
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Init({0.0f, 0.0f, 40.0f});
 }
 
 void GameScene::Update() {
@@ -49,6 +52,7 @@ void GameScene::Update() {
 #endif
 
 	player_->Update();
+	enemy_->Update();
 }
 
 void GameScene::Draw() {
@@ -79,6 +83,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProj_);
+	enemy_->Draw(viewProj_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
