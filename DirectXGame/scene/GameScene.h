@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "Collider.h"
 #include "Enemy.h"
 #include "Player.h"
 
@@ -45,7 +46,9 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+private:
 	void CheckAllCollisions();
+	void CheckColliderPair(Collider* colliderA, Collider* colliderB);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

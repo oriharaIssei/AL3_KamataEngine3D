@@ -110,51 +110,40 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	float distance;
-	Vector3 posA;
-	Vector3 posB;
-
-	constexpr float radius = 4.0f;
-
 	///========================================
 	/// 自機 と 敵弾
 	///========================================
-	posA = player_->getWorldPos();
 	for (auto& enemyBullet : enemy_->getBullets()) {
-		posB = enemyBullet->getWorldPos();
-		distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
-		if (distance <= powf(radius, 2.0f)) {
-			player_->OnCollision();
-			enemyBullet->OnCollision();
-		}
+		CheckColliderPair(player_.get(), enemyBullet.get());
 	}
 
 	///========================================
 	/// 自弾 と 敵
 	///========================================
-	posA = enemy_->getWorldPos();
 	for (auto& playerBullet : player_->getBullets()) {
-		posB = playerBullet->getWorldPos();
-		distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
-		if (distance <= powf(radius, 2.0f)) {
-			enemy_->OnCollision();
-			playerBullet->OnCollision();
-		}
+		CheckColliderPair(playerBullet.get(), enemy_.get());
 	}
 
 	///========================================
 	/// 自弾 と 敵弾
 	///========================================
-
 	for (auto& playerBullet : player_->getBullets()) {
-		posA = playerBullet->getWorldPos();
 		for (auto& enemyBullet : enemy_->getBullets()) {
-			posB = enemyBullet->getWorldPos();
-			distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
-			if (distance <= powf(radius, 2.0f)) {
-				playerBullet->OnCollision();
-				enemyBullet->OnCollision();
+			CheckColliderPair(playerBullet.get(), enemyBullet.get());
 			}
-		}
+	}
+}
+
+void GameScene::CheckColliderPair(Collider* colliderA, Collider* colliderB) {
+	float distance;
+	Vector3 posA;
+	Vector3 posB;
+
+	posA = colliderA->getWorldPos();
+	posB = colliderB->getWorldPos();
+	distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
+	if (distance <= powf(colliderA->getRadius() + colliderB->getRadius(), 2.0f)) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
 	}
 }

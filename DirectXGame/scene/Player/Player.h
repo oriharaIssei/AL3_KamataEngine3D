@@ -2,6 +2,7 @@
 
 #include "Input.h"
 
+#include "Collider.h"
 #include "Model.h"
 #include "PlayerBullet.h"
 
@@ -10,7 +11,7 @@
 #include <list>
 #include <memory>
 
-class Player {
+class Player :public Collider{
 public:
 	Player() = default;
 	~Player();
@@ -30,7 +31,7 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProj);
 	
-	void OnCollision(){};
+	void OnCollision()override{};
 
 private:
 	/// <summary>
@@ -60,6 +61,6 @@ private:
 	uint32_t th_;
 
 public:
-	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
+	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
 	const std::list<std::unique_ptr<PlayerBullet>>& getBullets() const { return bullets_; }
 };

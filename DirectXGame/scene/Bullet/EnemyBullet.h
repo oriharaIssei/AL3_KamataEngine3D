@@ -1,25 +1,26 @@
 #pragma once
 
+#include "Collider.h"
 #include "Model.h"
 
 #include "Vector3.h"
 #include "WorldTransform.h"
 
 class Player;
-class EnemyBullet {
+class EnemyBullet : public Collider {
 public:
 	/// <summary>
-	/// 
+	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="pos">出現位置</param>
 	/// <param name="velocity">速度Vector</param>
-	void Init(Model* model, const Vector3& pos,Player* player);
+	void Init(Model* model, const Vector3& pos, Player* player);
 
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
-	void OnCollision();
+	void OnCollision() override;
 
 private:
 	std::unique_ptr<Model> model_;
@@ -36,7 +37,7 @@ private:
 	Player* player_p;
 
 public:
-	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
+	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
 
 	bool IsDead() const { return isDead_; }
 };

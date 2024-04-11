@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Collider.h"
 #include "Model.h"
 
 #include "Vector3.h"
@@ -50,7 +51,7 @@ private:
 };
 
 class Player;
-class Enemy {
+class Enemy :public Collider{
 public:
 	void Init(const Vector3& pos, Player* player);
 	void Update();
@@ -64,7 +65,7 @@ public:
 	void UpdateTimedCalls();
 	void ClearTimedCalls() { timedCalls_.clear(); }
 	
-	void OnCollision(){};
+	void OnCollision()override{};
 
 public:
 	static const uint32_t kFierInterval;
@@ -87,7 +88,7 @@ private:
 	Player* player_ptr;
 
 public:
-	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
+	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
 	void setPos(const Vector3& pos) { worldTransform_.translation_ = pos; }
 
 	const std::list<std::unique_ptr<EnemyBullet>>& getBullets() const { return bullets_; }
