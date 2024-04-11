@@ -83,12 +83,12 @@ void Enemy::UpdateTimedCalls() {
 void EnemyStateApproach::Update() {
 	//========================================
 	//	移動
-	host_->setPos(velocity + host_->getPos());
+	host_->setPos(velocity + host_->getWorldPos());
 	//========================================
 
 	host_->UpdateTimedCalls();
 
-	if (host_->getPos().z <= 1.0f) {
+	if (host_->getWorldPos().z <= 1.0f) {
 		host_->ClearTimedCalls();
 		// host は同じ
 		host_->ChangeState(new EnemyStateLeave(host_));
@@ -98,7 +98,7 @@ void EnemyStateApproach::Update() {
 void EnemyStateLeave::Update() {
 	//========================================
 	//	移動
-	host_->setPos(velocity + host_->getPos());
+	host_->setPos(velocity + host_->getWorldPos());
 	//========================================
 }
 #pragma endregion

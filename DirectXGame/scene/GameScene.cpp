@@ -25,7 +25,7 @@ void GameScene::Initialize() {
 	player_->Init(Model::Create(), TextureManager::Load("sample.png"));
 
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Init({20.0f, 2.0f, 40.0f},player_.get());
+	enemy_->Init({20.0f, 2.0f, 40.0f}, player_.get());
 }
 
 void GameScene::Update() {
@@ -42,7 +42,7 @@ void GameScene::Update() {
 		// 情報の受け渡し
 		viewProj_.matView = camera_->GetViewProjection().matView;
 		viewProj_.matProjection = camera_->GetViewProjection().matProjection;
-	
+
 		// 転送
 		viewProj_.TransferMatrix();
 	} else {
@@ -52,12 +52,13 @@ void GameScene::Update() {
 #endif
 
 	player_->Update();
-	
+
 	if (input_->TriggerKey(DIK_2)) {
 		enemy_->Init({20.0f, 0.0f, 40.0f}, player_.get());
 	}
-
 	enemy_->Update();
+
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -106,4 +107,54 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	float distance;
+	Vector3 posA;
+	Vector3 posB;
+
+	constexpr float radius = 4.0f;
+
+	///========================================
+	/// 自機 と 敵弾
+	///========================================
+	posA = player_->getWorldPos();
+	for (auto& enemyBullet : enemy_->getBullets()) {
+		posB = enemyBullet->getWorldPos();
+		distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
+		if (distance <= powf(radius, 2.0f)) {
+			player_->OnCollision();
+			enemyBullet->OnCollision();
+		}
+	}
+
+	///========================================
+	/// 自弾 と 敵
+	///========================================
+	posA = enemy_->getWorldPos();
+	for (auto& playerBullet : player_->getBullets()) {
+		posB = playerBullet->getWorldPos();
+		distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
+		if (distance <= powf(radius, 2.0f)) {
+			enemy_->OnCollision();
+			playerBullet->OnCollision();
+		}
+	}
+
+	///========================================
+	/// 自弾 と 敵弾
+	///========================================
+
+	for (auto& playerBullet : player_->getBullets()) {
+		posA = playerBullet->getWorldPos();
+		for (auto& enemyBullet : enemy_->getBullets()) {
+			posB = enemyBullet->getWorldPos();
+			distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
+			if (distance <= powf(radius, 2.0f)) {
+				playerBullet->OnCollision();
+				enemyBullet->OnCollision();
+			}
+		}
+	}
 }

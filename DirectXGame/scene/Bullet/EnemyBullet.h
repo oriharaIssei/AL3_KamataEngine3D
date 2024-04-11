@@ -19,6 +19,8 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
+	void OnCollision();
+
 private:
 	std::unique_ptr<Model> model_;
 
@@ -34,5 +36,7 @@ private:
 	Player* player_p;
 
 public:
+	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
+
 	bool IsDead() const { return isDead_; }
 };

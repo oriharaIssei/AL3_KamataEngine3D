@@ -29,6 +29,8 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw(const ViewProjection& viewProj);
+	
+	void OnCollision(){};
 
 private:
 	/// <summary>
@@ -59,4 +61,5 @@ private:
 
 public:
 	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
+	const std::list<std::unique_ptr<PlayerBullet>>& getBullets() const { return bullets_; }
 };
