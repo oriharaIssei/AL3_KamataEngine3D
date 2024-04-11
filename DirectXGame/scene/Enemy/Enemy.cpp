@@ -67,8 +67,7 @@ void Enemy::InitOnApproach() {
 void Enemy::Fire() {
 	bullets_.push_back(std::make_unique<EnemyBullet>());
 	// player のいる方向に撃つ
-	Vector3 velocity = (player_ptr->getWorldPos() - worldTransform_.translation_).Normalize() * kBulletSpeed_;
-	bullets_.back()->Init(Model::Create(), worldTransform_.translation_, velocity);
+	bullets_.back()->Init(Model::Create(), worldTransform_.translation_, player_ptr);
 }
 
 void Enemy::UpdateTimedCalls() {

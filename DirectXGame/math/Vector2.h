@@ -17,7 +17,7 @@ struct Vector2 final {
 	float LengthSq()const;
 
 	float Dot()const;
-	float Dot(Vector2 another);
+	float Dot(const Vector2& another) const;
 
 	float Cross(const Vector2& another);
 
@@ -101,7 +101,7 @@ inline float Vector2::Dot() const {
 	return x * x + y * y;
 }
 
-inline float Vector2::Dot(Vector2 another) {
+inline float Vector2::Dot(const Vector2& another) const {
 	return (this->x * another.x) + (this->y * another.y);
 }
 

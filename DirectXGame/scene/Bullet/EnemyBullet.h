@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include "WorldTransform.h"
 
+class Player;
 class EnemyBullet {
 public:
 	/// <summary>
@@ -13,7 +14,7 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="pos">出現位置</param>
 	/// <param name="velocity">速度Vector</param>
-	void Init(Model* model, const Vector3& pos, const Vector3& velocity);
+	void Init(Model* model, const Vector3& pos,Player* player);
 
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
@@ -29,6 +30,8 @@ private:
 	bool isDead_ = false;
 
 	uint32_t th_;
+
+	Player* player_p;
 
 public:
 	bool IsDead() const { return isDead_; }
