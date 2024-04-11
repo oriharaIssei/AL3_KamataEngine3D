@@ -5,8 +5,8 @@
 struct Vector3 {
 	float x, y, z;
 
-	Vector3(float x, float y, float z) :x(x), y(y), z(z) {};
-	Vector3() :x(0), y(0), z(0) {};
+	Vector3(float x, float y, float z) : x(x), y(y), z(z){};
+	Vector3() : x(0), y(0), z(0){};
 
 	///
 	///	演算子
@@ -18,13 +18,7 @@ struct Vector3 {
 		return *this;
 	}
 
-	Vector3 operator+(const Vector3& another) {
-		return Vector3(
-			this->x + another.x,
-			this->y + another.y,
-			this->z + another.z
-		);
-	}
+	Vector3 operator+(const Vector3& another) { return Vector3(this->x + another.x, this->y + another.y, this->z + another.z); }
 	Vector3& operator+=(const Vector3& another) {
 		this->x += another.x;
 		this->y += another.y;
@@ -32,13 +26,8 @@ struct Vector3 {
 		return *this;
 	}
 
-	Vector3 operator-(const Vector3& another) {
-		return Vector3(
-			this->x - another.x,
-			this->y - another.y,
-			this->z - another.z
-		);
-	}
+	Vector3 operator-(const Vector3& another) { return Vector3(this->x - another.x, this->y - another.y, this->z - another.z); }
+	Vector3 operator-(const Vector3& another) const { return Vector3(this->x - another.x, this->y - another.y, this->z - another.z); }
 	Vector3& operator-=(const Vector3& another) {
 		this->x -= another.x;
 		this->y -= another.y;
@@ -46,13 +35,7 @@ struct Vector3 {
 		return *this;
 	}
 
-	Vector3 operator*(const float& scalar) {
-		return Vector3(
-			this->x * scalar,
-			this->y * scalar,
-			this->z * scalar
-		);
-	}
+	Vector3 operator*(const float& scalar) { return Vector3(this->x * scalar, this->y * scalar, this->z * scalar); }
 	Vector3& operator*=(const Vector3& another) {
 		this->x *= another.x;
 		this->y *= another.y;
@@ -60,24 +43,14 @@ struct Vector3 {
 		return *this;
 	}
 
-
-	float dot(const Vector3& another) {
-		return this->x * another.x + this->y * another.y + this->z * another.z;
-	}
-	float length() {
-		return std::sqrtf(dot(*this));
-	}
+	float dot(const Vector3& another) { return this->x * another.x + this->y * another.y + this->z * another.z; }
+	float length() { return std::sqrtf(dot(*this)); }
 
 	Vector3 Normalize() {
 		float len = this->length();
 		if (len == 0.0f) {
 			return *this;
 		}
-		return Vector3(
-			this->x / len,
-			this->y / len,
-			this->z / len
-		);
+		return Vector3(this->x / len, this->y / len, this->z / len);
 	}
 };
-

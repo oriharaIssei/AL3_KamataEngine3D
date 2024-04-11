@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 
 #include "TextureManager.h"
 #include <ImGuiManager.h>
@@ -7,7 +8,9 @@
 
 const uint32_t Enemy::kFierInterval = 60;
 
-void Enemy::Init(const Vector3& pos) {
+void Enemy::Init(const Vector3& pos, Player* player) {
+	SetPlayer(player);
+
 	model_.reset(Model::Create());
 
 	state_.reset(new EnemyStateApproach(this));
@@ -24,7 +27,7 @@ void Enemy::Update() {
 	//===============================================
 	// 古い要素の削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead() ? true : false; });
-	timedCalls_.remove_if([](std::unique_ptr<TimedCall<void,void>>& caller) { return caller->getIsOccured(); });
+	timedCalls_.remove_if([](std::unique_ptr<TimedCall<void, void>>& caller) { return caller->getIsOccured(); });
 	//===============================================
 
 	//===============================================
@@ -56,25 +59,23 @@ void Enemy::ChangeState(BaseEnemyState* nextState) { state_.reset(nextState); }
 void Enemy::InitOnApproach() {
 	Fire();
 
-	std::unique_ptr<TimedCall<void,void>> timedCaller = std::make_unique<TimedCall<void,void>>(std::bind(&Enemy::InitOnApproach,this),Enemy::kFierInterval);
+	std::unique_ptr<TimedCall<void, void>> timedCaller = std::make_unique<TimedCall<void, void>>(std::bind(&Enemy::InitOnApproach, this), Enemy::kFierInterval);
 
 	timedCalls_.push_back(std::move(timedCaller));
 }
 
 void Enemy::Fire() {
 	bullets_.push_back(std::make_unique<EnemyBullet>());
-	// 速度 と 向き を合わせる(回転させる)
-	Vector3 velocity = TransformNormal({0.0f, 0.0f, -0.3f}, worldTransform_.matWorld_);
+	// player のいる方向に撃つ
+	Vector3 velocity = (player_ptr->getWorldPos() - worldTransform_.translation_).Normalize() * kBulletSpeed_;
 	bullets_.back()->Init(Model::Create(), worldTransform_.translation_, velocity);
 }
 
 void Enemy::UpdateTimedCalls() {
-	for (auto& caller:timedCalls_) {
+	for (auto& caller : timedCalls_) {
 		caller->Update();
 	}
 }
-
-
 
 #pragma endregion
 

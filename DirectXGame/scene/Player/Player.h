@@ -56,4 +56,7 @@ private:
 	const float kBuletSpeed_ = 1.0f;
 
 	uint32_t th_;
+
+public:
+	const Vector3& getWorldPos() const { return worldTransform_.translation_; }
 };

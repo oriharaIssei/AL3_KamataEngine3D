@@ -14,7 +14,6 @@
 
 #include "TimedCall.h"
 
-
 enum class Phase { Approach, Leave };
 class Enemy;
 class BaseEnemyState {
@@ -50,9 +49,10 @@ private:
 	Vector3 velocity = {0.5f, 0.3f, 0.0f};
 };
 
+class Player;
 class Enemy {
 public:
-	void Init(const Vector3& pos);
+	void Init(const Vector3& pos, Player* player);
 	void Update();
 	void Draw(const ViewProjection& viewProj);
 
@@ -70,18 +70,23 @@ public:
 private:
 	WorldTransform worldTransform_;
 	const float kSpeed_ = 0.2f;
+	const float kBulletSpeed_ = 0.4f;
 
 	std::unique_ptr<Model> model_ = nullptr;
 
 	std::unique_ptr<BaseEnemyState> state_;
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-	std::list<std::unique_ptr<TimedCall<void,void>>> timedCalls_;
+	std::list<std::unique_ptr<TimedCall<void, void>>> timedCalls_;
 
 	int32_t fireTimer_ = 0;
 
 	uint32_t th_;
 
+	Player* player_ptr;
+
 public:
 	const Vector3& getPos() const { return worldTransform_.translation_; }
 	void setPos(const Vector3& pos) { worldTransform_.translation_ = pos; }
+
+	void SetPlayer(Player* player) { player_ptr = player; }
 };

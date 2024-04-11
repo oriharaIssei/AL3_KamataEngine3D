@@ -25,7 +25,7 @@ void GameScene::Initialize() {
 	player_->Init(Model::Create(), TextureManager::Load("sample.png"));
 
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Init({20.0f, 0.0f, 40.0f});
+	enemy_->Init({20.0f, 0.0f, 40.0f},player_.get());
 }
 
 void GameScene::Update() {
@@ -53,6 +53,10 @@ void GameScene::Update() {
 
 	player_->Update();
 	
+	if (input_->TriggerKey(DIK_2)) {
+		enemy_->Init({20.0f, 0.0f, 40.0f}, player_.get());
+	}
+
 	enemy_->Update();
 }
 
