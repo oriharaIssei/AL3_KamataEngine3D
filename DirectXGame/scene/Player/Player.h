@@ -59,7 +59,6 @@ private:
 	const float kBuletSpeed_ = 1.0f;
 
 	uint32_t th_;
-
 public:
 	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
 	const std::list<std::unique_ptr<PlayerBullet>>& getBullets() const { return bullets_; }

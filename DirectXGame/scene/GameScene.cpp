@@ -110,31 +110,35 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	///========================================
-	/// 自機 と 敵弾
-	///========================================
+	std::list<Collider*> colliders;
+	colliders.push_back(player_.get());
+	colliders.push_back(enemy_.get());
+	for (auto& playerBullet : player_->getBullets()) {
+		colliders.push_back(playerBullet.get());
+	}
 	for (auto& enemyBullet : enemy_->getBullets()) {
-		CheckColliderPair(player_.get(), enemyBullet.get());
+		colliders.push_back(enemyBullet.get());
 	}
 
-	///========================================
-	/// 自弾 と 敵
-	///========================================
-	for (auto& playerBullet : player_->getBullets()) {
-		CheckColliderPair(playerBullet.get(), enemy_.get());
-	}
+	std::list<Collider*>::iterator itrA = colliders.begin();
+	for (; itrA != colliders.end(); ++itrA) {
+		Collider* colliderA = *itrA;
 
-	///========================================
-	/// 自弾 と 敵弾
-	///========================================
-	for (auto& playerBullet : player_->getBullets()) {
-		for (auto& enemyBullet : enemy_->getBullets()) {
-			CheckColliderPair(playerBullet.get(), enemyBullet.get());
-			}
+		std::list<Collider*>::iterator itrB = itrA;
+		itrB++; // itrAの次のポインタを指すようにする
+		for (; itrB != colliders.end(); ++itrB) {
+			Collider* colliderB = *itrB;
+
+			CheckColliderPair(colliderA, colliderB);
+		}
 	}
 }
 
 void GameScene::CheckColliderPair(Collider* colliderA, Collider* colliderB) {
+	if ((colliderA->getCollisionAttribute() & colliderB->getCollisionMask()) == 0 || (colliderB->getCollisionAttribute() & colliderA->getCollisionMask()) == 0) {
+		return;
+	}
+
 	float distance;
 	Vector3 posA;
 	Vector3 posB;

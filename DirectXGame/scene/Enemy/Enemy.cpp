@@ -21,6 +21,9 @@ void Enemy::Init(const Vector3& pos, Player* player) {
 	InitOnApproach();
 
 	th_ = TextureManager::Load("cute_cat.png");
+
+	setCollisionAttribute(kCollisionAttributeEnemy);
+	setCollisionMask(~kCollisionAttributeEnemy);
 }
 
 void Enemy::Update() {

@@ -19,6 +19,9 @@ void EnemyBullet::Init(Model* model, const Vector3& pos, Player* player) {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
 	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
+
+	setCollisionAttribute(kCollisionAttributeEnemy);
+	setCollisionMask(~kCollisionAttributeEnemy);
 }
 void EnemyBullet::Update() {
 	if (--deathTimer_ <= 0) {
