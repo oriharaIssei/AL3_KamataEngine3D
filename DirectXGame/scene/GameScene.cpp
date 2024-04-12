@@ -26,6 +26,9 @@ void GameScene::Initialize() {
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Init({20.0f, 2.0f, 40.0f}, player_.get());
+
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Init();
 }
 
 void GameScene::Update() {
@@ -58,7 +61,16 @@ void GameScene::Update() {
 	}
 	enemy_->Update();
 
-	CheckAllCollisions();
+	collisionManager_->setCollider(player_.get());
+	collisionManager_->setCollider(enemy_.get());
+	for (auto& playerBullet:player_->getBullets()) {
+		collisionManager_->setCollider(playerBullet.get());
+	}
+	for (auto& EnemyBullet : enemy_->getBullets()) {
+		collisionManager_->setCollider(EnemyBullet.get());
+	}
+	collisionManager_->Update();
+	collisionManager_->ClearColliders();
 }
 
 void GameScene::Draw() {
@@ -107,47 +119,4 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
-}
-
-void GameScene::CheckAllCollisions() {
-	std::list<Collider*> colliders;
-	colliders.push_back(player_.get());
-	colliders.push_back(enemy_.get());
-	for (auto& playerBullet : player_->getBullets()) {
-		colliders.push_back(playerBullet.get());
-	}
-	for (auto& enemyBullet : enemy_->getBullets()) {
-		colliders.push_back(enemyBullet.get());
-	}
-
-	std::list<Collider*>::iterator itrA = colliders.begin();
-	for (; itrA != colliders.end(); ++itrA) {
-		Collider* colliderA = *itrA;
-
-		std::list<Collider*>::iterator itrB = itrA;
-		itrB++; // itrAの次のポインタを指すようにする
-		for (; itrB != colliders.end(); ++itrB) {
-			Collider* colliderB = *itrB;
-
-			CheckColliderPair(colliderA, colliderB);
-		}
-	}
-}
-
-void GameScene::CheckColliderPair(Collider* colliderA, Collider* colliderB) {
-	if ((colliderA->getCollisionAttribute() & colliderB->getCollisionMask()) == 0 || (colliderB->getCollisionAttribute() & colliderA->getCollisionMask()) == 0) {
-		return;
-	}
-
-	float distance;
-	Vector3 posA;
-	Vector3 posB;
-
-	posA = colliderA->getWorldPos();
-	posB = colliderB->getWorldPos();
-	distance = powf((posA.x - posB.x), 2.0f) + powf((posA.y - posB.y), 2.0f) + powf((posA.z - posB.z), 2.0f);
-	if (distance <= powf(colliderA->getRadius() + colliderB->getRadius(), 2.0f)) {
-		colliderA->OnCollision();
-		colliderB->OnCollision();
-	}
 }
