@@ -29,6 +29,9 @@ void GameScene::Initialize() {
 
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Init();
+
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Init();
 }
 
 void GameScene::Update() {
@@ -71,6 +74,8 @@ void GameScene::Update() {
 	}
 	collisionManager_->Update();
 	collisionManager_->ClearColliders();
+
+	skydome_->Update();
 }
 
 void GameScene::Draw() {
@@ -100,6 +105,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+
+	skydome_->Draw(viewProj_);
 	player_->Draw(viewProj_);
 	enemy_->Draw(viewProj_);
 
