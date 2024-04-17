@@ -4,12 +4,12 @@
 #include <cassert>
 
 Player::~Player() {
-	for (auto& bullet : bullets_) {
+	for(auto &bullet : bullets_) {
 		bullet.release();
 	}
 }
 
-void Player::Init(Model* model, uint32_t textureHandle) {
+void Player::Init(const Vector3 &pos, Model *model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	assert(model);
 	model_.reset(model);
@@ -17,6 +17,8 @@ void Player::Init(Model* model, uint32_t textureHandle) {
 	th_ = textureHandle;
 
 	worldTransform_.Initialize();
+	worldTransform_.translation_ = pos;
+	worldTransform_.rotation_={0.0f,0.0f,0.0f};
 
 	setCollisionAttribute(kCollisionAttributePlayer);
 	setCollisionMask(~kCollisionAttributePlayer);
@@ -25,7 +27,7 @@ void Player::Init(Model* model, uint32_t textureHandle) {
 void Player::Update() {
 	//===============================================
 	// 古い弾の削除
-	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead() ? true : false; });
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet> &bullet) { return bullet->IsDead() ? true : false; });
 	//===============================================
 
 	//===============================================
@@ -35,17 +37,17 @@ void Player::Update() {
 	Rotate();
 
 	// 移動
-	Vector3 move = {0.0f, 0.0f, 0.0f};
+	Vector3 move = { 0.0f, 0.0f, 0.0f };
 	// x 軸
-	if (input_->PushKey(DIK_LEFT)) {
+	if(input_->PushKey(DIK_LEFT)) {
 		move.x -= kSpeed_;
-	} else if (input_->PushKey(DIK_RIGHT)) {
+	} else if(input_->PushKey(DIK_RIGHT)) {
 		move.x += kSpeed_;
 	}
 	// y 軸
-	if (input_->PushKey(DIK_UP)) {
+	if(input_->PushKey(DIK_UP)) {
 		move.y += kSpeed_;
-	} else if (input_->PushKey(DIK_DOWN)) {
+	} else if(input_->PushKey(DIK_DOWN)) {
 		move.y -= kSpeed_;
 	}
 
@@ -79,34 +81,35 @@ void Player::Update() {
 	//===============================================
 	// worldTransform を更新
 	worldTransform_.UpdateMatrix();
+
 	//===============================================
 }
 
-void Player::Draw(const ViewProjection& viewProj) {
+void Player::Draw(const ViewProjection &viewProj) {
 	model_->Draw(worldTransform_, viewProj, th_);
 	// 弾があれば描画
-	for (auto& bullet : bullets_) {
+	for(auto &bullet : bullets_) {
 		bullet->Draw(viewProj);
 	}
 }
 
 void Player::Rotate() {
-	if (input_->PushKey(DIK_A)) {
+	if(input_->PushKey(DIK_A)) {
 		worldTransform_.rotation_.y -= kRotSpeed_;
-	} else if (input_->PushKey(DIK_D)) {
+	} else if(input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y += kRotSpeed_;
 	}
 }
 
 void Player::Attack() {
-	if (input_->TriggerKey(DIK_W)) {
+	if(input_->TriggerKey(DIK_W)) {
 		bullets_.push_back(std::make_unique<PlayerBullet>());
 		// 速度 と player の 向き を合わせる(回転させる)
-		Vector3 velocity = TransformNormal({0.0f, 0.0f, kBuletSpeed_}, worldTransform_.matWorld_);
+		Vector3 velocity = TransformNormal({ 0.0f, 0.0f, kBuletSpeed_ }, worldTransform_.matWorld_);
 		bullets_.back()->Init(Model::Create(), worldTransform_.translation_, velocity);
 	}
 
-	for (auto& bullet : bullets_) {
+	for(auto &bullet : bullets_) {
 		bullet->Update();
 	}
 }

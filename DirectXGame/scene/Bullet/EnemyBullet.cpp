@@ -2,7 +2,7 @@
 
 #include "Player.h"
 
-#include "Lerp.h"
+#include "myMath.h"
 #include "TextureManager.h"
 #include <cassert>
 
@@ -23,6 +23,7 @@ void EnemyBullet::Init(Model* model, const Vector3& pos, Player* player) {
 	setCollisionAttribute(kCollisionAttributeEnemy);
 	setCollisionMask(~kCollisionAttributeEnemy);
 }
+
 void EnemyBullet::Update() {
 	if (--deathTimer_ <= 0) {
 		isDead_ = true;

@@ -11,7 +11,7 @@
 #include <list>
 #include <memory>
 
-class Player :public Collider{
+class Player :public Collider {
 public:
 	Player() = default;
 	~Player();
@@ -21,7 +21,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// /// <param name="textureHandle">テクスチャハンドル</param>
-	void Init(Model* model, uint32_t textureHandle);
+	void Init(const Vector3 &pos, Model *model, uint32_t textureHandle);
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -29,9 +29,9 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw(const ViewProjection& viewProj);
-	
-	void OnCollision()override{};
+	void Draw(const ViewProjection &viewProj);
+
+	void OnCollision()override {};
 
 private:
 	/// <summary>
@@ -45,7 +45,7 @@ private:
 	void Attack();
 
 private:
-	Input* input_ = nullptr;
+	Input *input_ = nullptr;
 
 	WorldTransform worldTransform_;
 
@@ -60,6 +60,7 @@ private:
 
 	uint32_t th_;
 public:
-	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
-	const std::list<std::unique_ptr<PlayerBullet>>& getBullets() const { return bullets_; }
+	void setCameraTransform(const WorldTransform *transform) {worldTransform_.parent_ = transform; }
+	const Vector3 &getWorldPos() const override { return worldTransform_.translation_; }
+	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
 };

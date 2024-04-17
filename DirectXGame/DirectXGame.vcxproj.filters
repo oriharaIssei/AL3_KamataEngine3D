@@ -90,9 +90,6 @@
     <ClCompile Include="scene\TimedCall\TimedCall.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="math\Lerp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="scene\Collider\Collider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -100,6 +97,15 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scene\Skydome\Skydome.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\RailCamera\RailCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="math\myMath.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,9 +212,6 @@
     <ClInclude Include="scene\TimedCall\TimedCall.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="math\Lerp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="scene\Collider\Collider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -216,6 +219,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scene\Skydome\Skydome.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\RailCamera\RailCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="math\myMath.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

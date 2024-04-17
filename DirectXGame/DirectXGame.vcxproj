@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)scene/Player;$(ProjectDir)scene/Bullet;$(ProjectDir)scene/Enemy;$(ProjectDir)scene/TimedCall;$(ProjectDir)scene/Collider;$(ProjectDir)scene/CollisionManager;$(ProjectDir)scene/Skydome;$(ProjectDir)scene;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene/Player;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)scene/Player;$(ProjectDir)scene/Bullet;$(ProjectDir)scene/Enemy;$(ProjectDir)scene/TimedCall;$(ProjectDir)scene/Collider;$(ProjectDir)scene/CollisionManager;$(ProjectDir)scene/Skydome;$(ProjectDir)scene/RailCamera;$(ProjectDir)scene;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene/Player;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -86,7 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)scene/Player;$(ProjectDir)scene/Bullet;$(ProjectDir)scene/Enemy;$(ProjectDir)scene/TimedCall;$(ProjectDir)scene/Collider;$(ProjectDir)scene/CollisionManager;$(ProjectDir)scene/Skydome;$(ProjectDir)scene;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)scene/Player;$(ProjectDir)scene/Bullet;$(ProjectDir)scene/Enemy;$(ProjectDir)scene/TimedCall;$(ProjectDir)scene/Collider;$(ProjectDir)scene/CollisionManager;$(ProjectDir)scene/Skydome;$(ProjectDir)scene/RailCamera;$(ProjectDir)scene;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -110,7 +110,8 @@
     <ClCompile Include="3d\WorldTransformEx.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
-    <ClCompile Include="math\Lerp.cpp" />
+    <ClCompile Include="math\myMath.cpp" />
+    <ClCompile Include="math\Vector3.cpp" />
     <ClCompile Include="scene\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="scene\Bullet\PlayerBullet.cpp" />
@@ -120,6 +121,7 @@
     <ClCompile Include="scene\Player\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="scene\RailCamera\RailCamera.cpp" />
     <ClCompile Include="scene\Skydome\Skydome.cpp" />
     <ClCompile Include="scene\TimedCall\TimedCall.cpp" />
   </ItemGroup>
@@ -147,7 +149,7 @@
     <ClInclude Include="base\StringUtility.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
-    <ClInclude Include="math\Lerp.h" />
+    <ClInclude Include="math\myMath.h" />
     <ClInclude Include="scene\Bullet\EnemyBullet.h" />
     <ClInclude Include="scene\Bullet\PlayerBullet.h" />
     <ClInclude Include="scene\Collider\Collider.h" />
@@ -160,6 +162,7 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="scene\RailCamera\RailCamera.h" />
     <ClInclude Include="scene\Skydome\Skydome.h" />
     <ClInclude Include="scene\TimedCall\TimedCall.h" />
   </ItemGroup>
