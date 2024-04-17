@@ -24,7 +24,6 @@ private:
 
 	size_t count_ = 0;
 	std::vector<Vector3> controlPoints_;
-
 public:
 	const WorldTransform &getWorldTransform()const { return worldTransform_; }
 	const ViewProjection &getViewProjection() const { return viewProjection_; }

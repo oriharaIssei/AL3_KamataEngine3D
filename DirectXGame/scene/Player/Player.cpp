@@ -81,7 +81,6 @@ void Player::Update() {
 	//===============================================
 	// worldTransform を更新
 	worldTransform_.UpdateMatrix();
-
 	//===============================================
 }
 
