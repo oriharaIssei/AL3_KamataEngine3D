@@ -1,15 +1,24 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
-#include "DebugCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "memory"
+#include "vector"
+#include <memory>
+
+#include "Collider.h"
+#include "Enemy.h"
+#include "Player.h"
+#include "RailCamera.h"
+#include "Skydome.h"
+
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -50,5 +59,18 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	
+	std::unique_ptr<DebugCamera> debugCamera_;
+	std::unique_ptr<RailCamera> railCamera_;
+
+	bool isDebugCameraActive_ = false;
+	ViewProjection viewProj_;
+
+	std::unique_ptr<CollisionManager> collisionManager_;
+
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Enemy> enemy_;
+
+	std::unique_ptr<Skydome> skydome_;
+
+	std::vector<Vector3> pointsDrawing;
 };
