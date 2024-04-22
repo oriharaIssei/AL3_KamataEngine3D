@@ -1,4 +1,6 @@
 #include "Enemy.h"
+
+#include "GameScene.h"
 #include "Player.h"
 
 #include "TextureManager.h"
@@ -8,7 +10,10 @@
 
 const uint32_t Enemy::kFierInterval = 60;
 
-void Enemy::Init(const Vector3& pos, Player* player) {
+void Enemy::Init(const Vector3 &pos, Player *player, GameScene *gameScene) {
+	isDead_ = false;
+
+	gameScene_ptr = gameScene;
 	SetPlayer(player);
 
 	model_.reset(Model::Create());
@@ -29,35 +34,24 @@ void Enemy::Init(const Vector3& pos, Player* player) {
 void Enemy::Update() {
 	//===============================================
 	// 古い要素の削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead() ? true : false; });
-	timedCalls_.remove_if([](std::unique_ptr<TimedCall<void, void>>& caller) { return caller->getIsOccured(); });
+	timedCalls_.remove_if([](std::unique_ptr<TimedCall<void, void>> &caller) { return caller->getIsOccured(); });
 	//===============================================
 
 	//===============================================
 	// 現在のステートで更新処理
-	if (state_ != nullptr) {
+	if(state_ != nullptr) {
 		state_->Update();
-	}
-	//===============================================
-
-	//===============================================
-	// 弾の更新
-	for (auto& bullet : bullets_) {
-		bullet->Update();
 	}
 	//===============================================
 
 	worldTransform_.UpdateMatrix();
 }
 
-void Enemy::Draw(const ViewProjection& viewProj) {
+void Enemy::Draw(const ViewProjection &viewProj) {
 	model_->Draw(worldTransform_, viewProj, th_);
-	for (auto& bullet : bullets_) {
-		bullet->Draw(viewProj);
-	}
 }
 
-void Enemy::ChangeState(BaseEnemyState* nextState) { state_.reset(nextState); }
+void Enemy::ChangeState(BaseEnemyState *nextState) { state_.reset(nextState); }
 
 void Enemy::InitOnApproach() {
 	Fire();
@@ -68,15 +62,20 @@ void Enemy::InitOnApproach() {
 }
 
 void Enemy::Fire() {
-	bullets_.push_back(std::make_unique<EnemyBullet>());
-	// player のいる方向に撃つ
-	bullets_.back()->Init(Model::Create(), worldTransform_.translation_, player_ptr);
+	EnemyBullet* bullet = new EnemyBullet();
+	bullet->Init(Model::Create(), this->getWorldPos(), player_ptr);
+	gameScene_ptr->setEnemyBullet(bullet);
 }
 
 void Enemy::UpdateTimedCalls() {
-	for (auto& caller : timedCalls_) {
+	for(auto &caller : timedCalls_) {
 		caller->Update();
 	}
+}
+
+Vector3 Enemy::getWorldPos() const {
+	Vector3 pos = Transform({ 0.0f,0.0f,0.0f }, worldTransform_.matWorld_);
+	return pos;
 }
 
 #pragma endregion
@@ -86,12 +85,12 @@ void Enemy::UpdateTimedCalls() {
 void EnemyStateApproach::Update() {
 	//========================================
 	//	移動
-	host_->setPos(velocity + host_->getWorldPos());
+	host_->setPos(velocity + host_->getTranslation());
 	//========================================
 
 	host_->UpdateTimedCalls();
 
-	if (host_->getWorldPos().z <= 1.0f) {
+	if(host_->getWorldPos().z <= -2.0f) {
 		host_->ClearTimedCalls();
 		// host は同じ
 		host_->ChangeState(new EnemyStateLeave(host_));
@@ -101,7 +100,7 @@ void EnemyStateApproach::Update() {
 void EnemyStateLeave::Update() {
 	//========================================
 	//	移動
-	host_->setPos(velocity + host_->getWorldPos());
+	host_->setPos(velocity + host_->getTranslation());
 	//========================================
 }
 #pragma endregion

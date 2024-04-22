@@ -32,5 +32,5 @@ public:
 	const uint32_t& getCollisionMask() const { return collisionMask_; }
 	void setCollisionMask(const uint32_t& collisionMask) { collisionMask_ = collisionMask; }
 
-	virtual const Vector3& getWorldPos() const = 0;
+	virtual Vector3 getWorldPos() const = 0;
 };

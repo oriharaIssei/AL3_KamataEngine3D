@@ -18,6 +18,8 @@
 #include "RailCamera.h"
 #include "Skydome.h"
 
+#include <sstream>
+
 #include "CollisionManager.h"
 
 /// <summary>
@@ -51,10 +53,16 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+private:
+	void BulletsUpdate();
+	void EnemiesUpdate();
+
+	void LoadEnemyPopData();
+	void UpdateEnemyPopCommands();
 private: // メンバ変数
-	DirectXCommon* dxCommon_ = nullptr;
-	Input* input_ = nullptr;
-	Audio* audio_ = nullptr;
+	DirectXCommon *dxCommon_ = nullptr;
+	Input *input_ = nullptr;
+	Audio *audio_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
@@ -68,9 +76,16 @@ private: // メンバ変数
 	std::unique_ptr<CollisionManager> collisionManager_;
 
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<Enemy> enemy_;
+
+	uint32_t waitCommandTimer_ = 0;
+	std::stringstream enemyPopCommands_;
+	std::string enemyPopDataPath_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullet_;
 
 	std::unique_ptr<Skydome> skydome_;
 
 	std::vector<Vector3> pointsDrawing;
+public:
+	void setEnemyBullet(EnemyBullet *bullet) { enemyBullet_.push_back(std::unique_ptr<EnemyBullet>(bullet)); }
 };

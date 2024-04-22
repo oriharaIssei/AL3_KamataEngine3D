@@ -60,7 +60,7 @@ private:
 
 	uint32_t th_;
 public:
-	void setCameraTransform(const WorldTransform *transform) {worldTransform_.parent_ = transform; }
-	const Vector3 &getWorldPos() const override { return worldTransform_.translation_; }
+	void setCameraTransform(const WorldTransform *transform) { worldTransform_.parent_ = transform; }
+	Vector3 getWorldPos() const override ;
 	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
 };

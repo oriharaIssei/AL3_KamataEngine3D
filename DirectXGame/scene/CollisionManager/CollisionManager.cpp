@@ -18,7 +18,10 @@ void CollisionManager::Update() {
 }
 
 void CollisionManager::CheckColliderPair(Collider* colliderA, Collider* colliderB) {
-	if ((colliderA->getCollisionAttribute() & colliderB->getCollisionMask()) == 0 || (colliderB->getCollisionAttribute() & colliderA->getCollisionMask()) == 0) {
+	if (
+		(colliderA->getCollisionAttribute() & colliderB->getCollisionMask()) == 0 
+		|| 
+		(colliderB->getCollisionAttribute() & colliderA->getCollisionMask()) == 0) {
 		return;
 	}
 

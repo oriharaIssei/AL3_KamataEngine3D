@@ -18,7 +18,7 @@ void Player::Init(const Vector3 &pos, Model *model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
-	worldTransform_.rotation_={0.0f,0.0f,0.0f};
+	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 
 	setCollisionAttribute(kCollisionAttributePlayer);
 	setCollisionMask(~kCollisionAttributePlayer);
@@ -71,10 +71,10 @@ void Player::Update() {
 
 	//===============================================
 	// 移動の制限
-	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -30.0f);
-	worldTransform_.translation_.x = min(worldTransform_.translation_.x, 30.0f);
-	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -16.0f);
-	worldTransform_.translation_.y = min(worldTransform_.translation_.y, 16.0f);
+	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -6.0f);
+	worldTransform_.translation_.x = min(worldTransform_.translation_.x, 6.0f);
+	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -4.0f);
+	worldTransform_.translation_.y = min(worldTransform_.translation_.y, 4.0f);
 
 	//===============================================
 
@@ -105,10 +105,15 @@ void Player::Attack() {
 		bullets_.push_back(std::make_unique<PlayerBullet>());
 		// 速度 と player の 向き を合わせる(回転させる)
 		Vector3 velocity = TransformNormal({ 0.0f, 0.0f, kBuletSpeed_ }, worldTransform_.matWorld_);
-		bullets_.back()->Init(Model::Create(), worldTransform_.translation_, velocity);
+		bullets_.back()->Init(Model::Create(), Transform({ 0.0f,0.0f,0.0f }, worldTransform_.matWorld_), velocity);
 	}
 
 	for(auto &bullet : bullets_) {
 		bullet->Update();
 	}
+}
+
+Vector3 Player::getWorldPos() const {
+	Vector3 pos = Transform({ 0.0f,0.0f,0.0f }, worldTransform_.matWorld_);
+	return pos;
 }

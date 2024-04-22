@@ -37,7 +37,7 @@ private:
 	uint32_t th_;
 
 public:
-	const Vector3& getWorldPos() const override { return worldTransform_.translation_; }
+	Vector3 getWorldPos() const override { return Transform({0.0f,0.0f,0.0f},worldTransform_.matWorld_); }
 
 	bool IsDead() const { return isDead_; }
 };
