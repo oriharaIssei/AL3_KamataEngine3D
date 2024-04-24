@@ -5,6 +5,7 @@
 #include "Collider.h"
 #include "Model.h"
 #include "PlayerBullet.h"
+#include "Sprite.h"
 
 #include "WorldTransform.h"
 
@@ -30,6 +31,7 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw(const ViewProjection &viewProj);
+	void DrawUI(const ViewProjection &viewProj);
 
 	void OnCollision()override {};
 
@@ -58,9 +60,15 @@ private:
 	// 弾の速度
 	const float kBuletSpeed_ = 1.0f;
 
-	uint32_t th_;
+	uint32_t modelTh_;
+
+	WorldTransform worldTransform3DReticle_;
+	std::unique_ptr<Sprite> reticle_;
+	uint32_t reticleTh_;
 public:
-	void setCameraTransform(const WorldTransform *transform) { worldTransform_.parent_ = transform; }
-	Vector3 getWorldPos() const override ;
+	void setCameraTransform(const WorldTransform *transform) {
+		worldTransform_.parent_ = transform;
+	}
+	Vector3 getWorldPos() const override;
 	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
 };

@@ -6,7 +6,7 @@
 #include "TextureManager.h"
 #include <cassert>
 
-void EnemyBullet::Init(Model* model, const Vector3& pos, Player* player) {
+void EnemyBullet::Init(Model *model, const Vector3 &pos, Player *player) {
 	player_p = player;
 
 	velocity_ = (player_p->getWorldPos() - pos).Normalize() * 0.01f;
@@ -18,14 +18,14 @@ void EnemyBullet::Init(Model* model, const Vector3& pos, Player* player) {
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
-	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
+	worldTransform_.scale_ = { 0.5f, 0.5f, 3.0f };
 
 	setCollisionAttribute(kCollisionAttributeEnemy);
 	setCollisionMask(~kCollisionAttributeEnemy);
 }
 
 void EnemyBullet::Update() {
-	if (--deathTimer_ <= 0) {
+	if(--deathTimer_ <= 0) {
 		isDead_ = true;
 	}
 
@@ -45,6 +45,6 @@ void EnemyBullet::Update() {
 	worldTransform_.UpdateMatrix();
 }
 
-void EnemyBullet::Draw(const ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection, th_); }
+void EnemyBullet::Draw(const ViewProjection &viewProjection) { model_->Draw(worldTransform_, viewProjection, th_); }
 
 void EnemyBullet::OnCollision() { isDead_ = true; }
