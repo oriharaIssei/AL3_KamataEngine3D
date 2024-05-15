@@ -8,10 +8,12 @@
 #include "Sprite.h"
 
 #include "WorldTransform.h"
+#include <Vector2.h>
 
 #include <list>
 #include <memory>
 
+class Enemy;
 class Player :public Collider {
 public:
 	Player() = default;
@@ -26,7 +28,7 @@ public:
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	void Update();
+	void Update(const ViewProjection &viewProj);
 	/// <summary>
 	/// 描画処理
 	/// </summary>
@@ -35,6 +37,7 @@ public:
 
 	void OnCollision()override {};
 
+	void LockOn();
 private:
 	/// <summary>
 	/// 旋回
@@ -48,6 +51,8 @@ private:
 
 private:
 	Input *input_ = nullptr;
+
+	std::list<std::unique_ptr<Enemy>> *enemyList_;
 
 	WorldTransform worldTransform_;
 
@@ -64,6 +69,7 @@ private:
 
 	WorldTransform worldTransform3DReticle_;
 	std::unique_ptr<Sprite> reticle_;
+	Vector2 mousePos_;
 	uint32_t reticleTh_;
 public:
 	void setCameraTransform(const WorldTransform *transform) {
@@ -71,4 +77,21 @@ public:
 	}
 	Vector3 getWorldPos() const override;
 	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
+	const void setEnemyList(std::list<std::unique_ptr<Enemy>> *enemyList) { enemyList_ = enemyList; };
+};
+
+class PlayerAttackCommand {
+public:
+	virtual void Update() = 0;
+protected:
+	Player *host;
+};
+
+class NormalAttack :public PlayerAttackCommand {
+public:
+	void Update()override;
+};
+class MultiLockon :public PlayerAttackCommand {
+public:
+	void Update()override;
 };

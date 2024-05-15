@@ -92,7 +92,7 @@ void GameScene::Update() {
 	// 転送
 	viewProj_.TransferMatrix();
 
-	player_->Update();
+	player_->Update(viewProj_);
 	EnemiesUpdate();
 	BulletsUpdate();
 

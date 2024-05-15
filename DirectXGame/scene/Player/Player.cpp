@@ -6,6 +6,8 @@
 
 #include <cassert>
 
+#include <myMath.h>
+
 Player::~Player() {
 	for(auto &bullet : bullets_) {
 		bullet.release();
@@ -32,7 +34,7 @@ void Player::Init(const Vector3 &pos, Model *model, uint32_t textureHandle) {
 	reticle_->SetSize({ 40.0f,40.0f });
 }
 
-void Player::Update() {
+void Player::Update(const ViewProjection &viewProj) {
 	//===============================================
 	// 古い弾の削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet> &bullet) { return bullet->IsDead() ? true : false; });
@@ -60,12 +62,6 @@ void Player::Update() {
 	}
 
 	worldTransform_.translation_ += move;
-
-	//===============================================
-
-	//===============================================
-	// キャラクター攻撃処理
-	Attack();
 	//===============================================
 
 	//===============================================
@@ -79,12 +75,23 @@ void Player::Update() {
 
 	//===============================================
 	// 3D Reticle 更新
-	constexpr float kDistancePlayerTo3DReticle = 50.0f;
-	Vector3 offset = { 0.0f,0.0f,1.0f };
-	offset = Transform(offset, MakeMatrix::Affine(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_));
-	offset = offset.Normalize() * kDistancePlayerTo3DReticle;
-	worldTransform3DReticle_.translation_ = offset + worldTransform_.translation_;
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(WinApp::GetInstance()->GetHwnd(), &mousePos);
+	mousePos_ = { (float)mousePos.x,(float)mousePos.y };
 
+	Matrix4x4 inverseVpv = MakeMatrix::InverseVpv(viewProj.matView, viewProj.matProjection, MakeMatrix::ViewPort(0.0f, 0.0f, (float)WinApp::kWindowWidth, (float)WinApp::kWindowHeight, 0.0f, 1.0f));
+	Vector3 mouseOnNearClip = Transform({ mousePos_.x,mousePos_.y,0.0f }, inverseVpv);
+	Vector3 mouseOnFarClip = Transform({ mousePos_.x,mousePos_.y,1.0f }, inverseVpv);
+
+	constexpr float kDistancePlayerTo3DReticle = 50.0f;
+	Vector3 dir = (mouseOnFarClip - mouseOnNearClip).Normalize();
+	worldTransform3DReticle_.translation_ = mouseOnNearClip + (dir * kDistancePlayerTo3DReticle);
+	//===============================================
+
+	//===============================================
+	// キャラクター攻撃処理
+	Attack();
 	//===============================================
 
 	//===============================================
@@ -125,6 +132,9 @@ void Player::DrawUI(const ViewProjection &viewProj) {
 	reticle_->Draw();
 }
 
+void Player::LockOn() {
+}
+
 void Player::Rotate() {
 	if(input_->PushKey(DIK_A)) {
 		worldTransform_.rotation_.y -= kRotSpeed_;
@@ -150,4 +160,10 @@ void Player::Attack() {
 Vector3 Player::getWorldPos() const {
 	Vector3 pos = Transform({ 0.0f,0.0f,0.0f }, worldTransform_.matWorld_);
 	return pos;
+}
+
+void NormalAttack::Update() {
+}
+
+void MultiLockon::Update() {
 }
