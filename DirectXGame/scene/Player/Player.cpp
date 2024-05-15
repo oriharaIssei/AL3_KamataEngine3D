@@ -35,6 +35,8 @@ void Player::Init(const Vector3 &pos, Model *model, uint32_t textureHandle) {
 	reticleColor_ = { 1,1,1,1 };
 	reticle_.reset(Sprite::Create(reticleTh_, { 0.0f,0.0f }, reticleColor_, { 0.5f,0.5f }));
 	reticle_->SetSize({ 40.0f,40.0f });
+
+	attackCommand_ = std::make_unique<NormalAttack>(this);
 }
 
 void Player::Update(const ViewProjection &viewProj) {
@@ -104,8 +106,13 @@ void Player::Update(const ViewProjection &viewProj) {
 
 	//===============================================
 	// キャラクター攻撃処理
-	SingleLockOn(viewProj);
-	Attack();
+
+	attackCommand_->Update(viewProj);
+
+	for(auto &bullet : bullets_) {
+		bullet->Update();
+	}
+
 	//===============================================
 
 	//===============================================
@@ -162,19 +169,13 @@ void Player::Rotate() {
 		worldTransform_.rotation_.y += kRotSpeed_;
 	}
 }
-
-void Player::Attack() {
-
-	if(input_->TriggerKey(DIK_W)) {
+void Player::Shot() {
+	if(input_->IsTriggerMouse(0)) {
 		bullets_.push_back(std::make_unique<PlayerBullet>());
 		// 速度 と player の 向き を合わせる(回転させる)
-		Vector3 velocity = Transform({ 0.0f,0.0f,0.0f }, worldTransform3DReticle_.matWorld_) - getWorldPos();;
+		Vector3 velocity = Transform({ 0.0f,0.0f,0.0f }, worldTransform3DReticle_.matWorld_) - getWorldPos();
 		velocity = velocity.Normalize() * kBuletSpeed_;
 		bullets_.back()->Init(Model::Create(), Transform({ 0.0f,0.0f,0.0f }, worldTransform_.matWorld_), velocity);
-	}
-
-	for(auto &bullet : bullets_) {
-		bullet->Update();
 	}
 }
 
@@ -183,8 +184,39 @@ Vector3 Player::getWorldPos() const {
 	return pos;
 }
 
-void NormalAttack::Update() {
+void NormalAttack::Update(const ViewProjection &viewProj) {
+	if(host->input_->IsPressMouse(1)) {
+		host->attackCommand_ = std::make_unique<MultiLockon>(host);
+		return;
+	}
+	host->SingleLockOn(viewProj);
+	host->Shot();
 }
 
-void MultiLockon::Update() {
+void MultiLockon::Update(const ViewProjection &viewProj) {
+	Matrix4x4 vpv = viewProj.matView * viewProj.matProjection * MakeMatrix::ViewPort(0.0f, 0.0f, (float)WinApp::kWindowWidth, (float)WinApp::kWindowHeight, 0.0f, 1.0f);
+
+	Vector3 screenEnemyPos;
+	Vector3 distance;
+	for(auto &enemy : *host->enemyList_) {
+		screenEnemyPos = Transform(enemy->getWorldPos(), vpv);
+		distance = host->reticlePos_ - screenEnemyPos;
+		if(distance.length() < 16.0f) {
+			lockOnEnemyList_.push_back(enemy.get());
+		}
+	}
+
+	if(host->input_->IsPressMouse(1)) {
+		return;
+	}
+
+	Vector3 velocity;
+	for(auto &enemy : lockOnEnemyList_) {
+		host->bullets_.push_back(std::make_unique<PlayerBullet>());
+		// 速度 と player の 向き を合わせる(回転させる)
+		velocity = enemy->getWorldPos() - host->getWorldPos();
+		velocity = velocity.Normalize() * host->kBuletSpeed_;
+		host->bullets_.back()->Init(Model::Create(), Transform({ 0.0f,0.0f,0.0f }, host->worldTransform_.matWorld_), velocity);
+	}
+	host->attackCommand_.reset(new NormalAttack(host));
 }

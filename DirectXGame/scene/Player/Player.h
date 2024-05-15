@@ -14,7 +14,36 @@
 #include <memory>
 
 class Enemy;
+class Player;
+
+class PlayerAttackCommand {
+public:
+	PlayerAttackCommand(Player *hostPtr):host(hostPtr) {};
+	virtual ~PlayerAttackCommand() {};
+
+	virtual void Update(const ViewProjection &viewProj) = 0;
+protected:
+	Player *host;
+};
+
+class NormalAttack :public PlayerAttackCommand {
+public:
+	NormalAttack(Player *hostPtr):PlayerAttackCommand(hostPtr) {};
+	~NormalAttack()override {};
+	void Update(const ViewProjection &viewProj)override;
+};
+class MultiLockon :public PlayerAttackCommand {
+public:
+	MultiLockon(Player *hostPtr):PlayerAttackCommand(hostPtr) {};
+	~MultiLockon()override { lockOnEnemyList_.clear(); }
+	void Update(const ViewProjection &viewProj)override;
+private:
+	std::list<Enemy *> lockOnEnemyList_;
+};
+
 class Player :public Collider {
+	friend NormalAttack;
+	friend MultiLockon;
 public:
 	Player() = default;
 	~Player();
@@ -37,7 +66,6 @@ public:
 
 	void OnCollision()override {};
 
-	void SingleLockOn(const ViewProjection &viewProj);
 private:
 	/// <summary>
 	/// 旋回
@@ -47,8 +75,9 @@ private:
 	/// <summary>
 	/// 攻撃
 	/// </summary>
-	void Attack();
+	void Shot();
 
+	void SingleLockOn(const ViewProjection &viewProj);
 private:
 	Input *input_ = nullptr;
 
@@ -73,6 +102,8 @@ private:
 	Vector2 mousePos_;
 	Vector4 reticleColor_;
 	uint32_t reticleTh_;
+
+	std::unique_ptr<PlayerAttackCommand> attackCommand_ = nullptr;
 public:
 	void setCameraTransform(const WorldTransform *transform) {
 		worldTransform_.parent_ = transform;
@@ -80,20 +111,5 @@ public:
 	Vector3 getWorldPos() const override;
 	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
 	const void setEnemyList(std::list<std::unique_ptr<Enemy>> *enemyList) { enemyList_ = enemyList; };
-};
-
-class PlayerAttackCommand {
-public:
-	virtual void Update() = 0;
-protected:
-	Player *host;
-};
-
-class NormalAttack :public PlayerAttackCommand {
-public:
-	void Update()override;
-};
-class MultiLockon :public PlayerAttackCommand {
-public:
-	void Update()override;
+	const std::list<std::unique_ptr<Enemy>> &getEnemyList()const { return *enemyList_; }
 };
