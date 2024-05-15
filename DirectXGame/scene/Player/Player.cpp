@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <Enemy.h>
+
 #include "ImGuiManager.h"
 #include "TextureManager.h"
 #include <WinApp.h>
@@ -30,7 +32,8 @@ void Player::Init(const Vector3 &pos, Model *model, uint32_t textureHandle) {
 
 	worldTransform3DReticle_.Initialize();
 	reticleTh_ = TextureManager::Load("reticle.png");
-	reticle_.reset(Sprite::Create(reticleTh_, { 0.0f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	reticleColor_ = { 1,1,1,1 };
+	reticle_.reset(Sprite::Create(reticleTh_, { 0.0f,0.0f }, reticleColor_, { 0.5f,0.5f }));
 	reticle_->SetSize({ 40.0f,40.0f });
 }
 
@@ -90,7 +93,18 @@ void Player::Update(const ViewProjection &viewProj) {
 	//===============================================
 
 	//===============================================
+	// Reticle を スクリーン座標で
+	reticlePos_ = Transform({ 0.0f,0.0f,0.0f }, worldTransform3DReticle_.matWorld_);
+	reticlePos_ = Transform(reticlePos_,
+							viewProj.matView
+							* viewProj.matProjection
+							* MakeMatrix::ViewPort(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.0f, 1.0f)
+	);
+	//===============================================
+
+	//===============================================
 	// キャラクター攻撃処理
+	SingleLockOn(viewProj);
 	Attack();
 	//===============================================
 
@@ -118,21 +132,27 @@ void Player::Draw(const ViewProjection &viewProj) {
 	}
 }
 
-void Player::DrawUI(const ViewProjection &viewProj) {
-	//===============================================
-	// Reticle を スクリーン座標で
-	Vector3 reticlePos = Transform({ 0.0f,0.0f,0.0f }, worldTransform3DReticle_.matWorld_);
-	reticlePos = Transform(reticlePos,
-						   viewProj.matView
-						   * viewProj.matProjection
-						   * MakeMatrix::ViewPort(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.0f, 1.0f)
-	);
-	reticle_->SetPosition({ reticlePos.x,reticlePos.y });
-	//===============================================
+void Player::DrawUI() {
+	reticle_->SetPosition({ reticlePos_.x, reticlePos_.y });
+	reticle_->SetColor(reticleColor_);
 	reticle_->Draw();
 }
 
-void Player::LockOn() {
+void Player::SingleLockOn(const ViewProjection &viewProj) {
+	Matrix4x4 vpv = viewProj.matView * viewProj.matProjection * MakeMatrix::ViewPort(0.0f, 0.0f, (float)WinApp::kWindowWidth, (float)WinApp::kWindowHeight, 0.0f, 1.0f);
+
+	Vector3 screenEnemyPos;
+	Vector3 distance;
+	for(auto &enemy : *enemyList_) {
+		screenEnemyPos = Transform(enemy->getWorldPos(), vpv);
+		distance = reticlePos_ - screenEnemyPos;
+		if(distance.length() < 32.0f) {
+			reticlePos_ = screenEnemyPos;
+			reticleColor_ = { 1.0f,0.0f,0.0f ,1.0f };
+			return;
+		}
+	}
+	reticleColor_ = { 1.0f,1.0f,1.0f ,1.0f };
 }
 
 void Player::Rotate() {
@@ -144,6 +164,7 @@ void Player::Rotate() {
 }
 
 void Player::Attack() {
+
 	if(input_->TriggerKey(DIK_W)) {
 		bullets_.push_back(std::make_unique<PlayerBullet>());
 		// 速度 と player の 向き を合わせる(回転させる)

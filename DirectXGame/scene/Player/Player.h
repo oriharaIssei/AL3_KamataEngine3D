@@ -33,11 +33,11 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw(const ViewProjection &viewProj);
-	void DrawUI(const ViewProjection &viewProj);
+	void DrawUI();
 
 	void OnCollision()override {};
 
-	void LockOn();
+	void SingleLockOn(const ViewProjection &viewProj);
 private:
 	/// <summary>
 	/// 旋回
@@ -69,7 +69,9 @@ private:
 
 	WorldTransform worldTransform3DReticle_;
 	std::unique_ptr<Sprite> reticle_;
+	Vector3 reticlePos_;
 	Vector2 mousePos_;
+	Vector4 reticleColor_;
 	uint32_t reticleTh_;
 public:
 	void setCameraTransform(const WorldTransform *transform) {

@@ -32,6 +32,8 @@ void GameScene::Initialize() {
 	enemies_.push_back(std::make_unique<Enemy>());
 	enemies_.back()->Init({ 20.0f, 2.0f, 40.0f }, player_.get(), this);
 
+	player_->setEnemyList(&enemies_);
+
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Init();
 
@@ -105,7 +107,7 @@ void GameScene::Update() {
 	collisionManager_->ClearColliders();
 
 	skydome_->Update();
-}
+	}
 
 void GameScene::Draw() {
 	// コマンドリストの取得
@@ -158,7 +160,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	player_->DrawUI(viewProj_);
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
