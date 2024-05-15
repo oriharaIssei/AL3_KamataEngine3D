@@ -55,7 +55,7 @@ void GameScene::Initialize() {
 		pointsDrawing.push_back(CatmullRomInterpolation(controlPoints, t));
 	}
 
-	player_->setCameraTransform(&railCamera_->getWorldTransform());
+	// player_->setCameraTransform(&railCamera_->getWorldTransform());
 
 	waitCommandTimer_ = (uint32_t)0;
 	enemyPopDataPath_ = "./csvData/enemyPopCommands.csv";
@@ -82,7 +82,7 @@ void GameScene::Update() {
 	} else {
 		railCamera_->Update();
 		viewProj_.matProjection = railCamera_->getViewProjection().matProjection;
-		viewProj_.matView = railCamera_->getViewProjection().matView;
+		viewProj_.matView = player_->getWorldTransform().matWorld_.Inverse();
 	}
 #endif
 #ifndef _DEBUG
@@ -107,7 +107,7 @@ void GameScene::Update() {
 	collisionManager_->ClearColliders();
 
 	skydome_->Update();
-	}
+}
 
 void GameScene::Draw() {
 	// コマンドリストの取得

@@ -62,15 +62,15 @@ void Enemy::InitOnApproach() {
 }
 
 void Enemy::Fire() {
-	/*EnemyBullet* bullet = new EnemyBullet();
+	EnemyBullet* bullet = new EnemyBullet();
 	bullet->Init(Model::Create(), this->getWorldPos(), player_ptr);
-	gameScene_ptr->setEnemyBullet(bullet);*/
+	gameScene_ptr->setEnemyBullet(bullet);
 }
 
 void Enemy::UpdateTimedCalls() {
-	/*for(auto &caller : timedCalls_) {
+	for(auto &caller : timedCalls_) {
 		caller->Update();
-	}*/
+	}
 }
 
 Vector3 Enemy::getWorldPos() const {

@@ -108,8 +108,13 @@ public:
 	void setCameraTransform(const WorldTransform *transform) {
 		worldTransform_.parent_ = transform;
 	}
+
 	Vector3 getWorldPos() const override;
+
 	const std::list<std::unique_ptr<PlayerBullet>> &getBullets() const { return bullets_; }
+
 	const void setEnemyList(std::list<std::unique_ptr<Enemy>> *enemyList) { enemyList_ = enemyList; };
 	const std::list<std::unique_ptr<Enemy>> &getEnemyList()const { return *enemyList_; }
+
+	const WorldTransform &getWorldTransform()const { return worldTransform_; }
 };
