@@ -1,15 +1,19 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DirectXCommon.h"
 #include "Input.h"
-#include "Model.h"
-#include "Sprite.h"
-#include "DebugCamera.h"
+
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
 #include "memory"
+
+#include "Model.h"
+#include "Sprite.h"
+
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -43,12 +47,19 @@ public: // メンバ関数
 	void Draw();
 
 private: // メンバ変数
-	DirectXCommon* dxCommon_ = nullptr;
-	Input* input_ = nullptr;
-	Audio* audio_ = nullptr;
+	DirectXCommon *dxCommon_ = nullptr;
+	Input *input_ = nullptr;
+	Audio *audio_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	
+
+	std::unique_ptr<DebugCamera> debugCamera;
+
+	ViewProjection viewProj_;
+
+	std::unique_ptr<Player> player_;
+
+
 };

@@ -15,17 +15,29 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	
+	debugCamera = std::make_unique<DebugCamera>(WinApp::kWindowWidth, WinApp::kWindowHeight);
+
+	viewProj_.Initialize();
+
+	player_ = std::make_unique<Player>();
+	player_->Init();
 }
 
 void GameScene::Update() {
+#ifdef _DEBUG
+	debugCamera->Update();
+	viewProj_.matView = debugCamera->GetViewProjection().matView;
+	viewProj_.matProjection = debugCamera->GetViewProjection().matProjection;
+#endif // _DEBUG
+	viewProj_.TransferMatrix();
 
+	player_->Update();
 }
 
 void GameScene::Draw() {
 
 	// コマンドリストの取得
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+	ID3D12GraphicsCommandList *commandList = dxCommon_->GetCommandList();
 
 #pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
@@ -49,8 +61,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
 
+	player_->Draw(viewProj_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
