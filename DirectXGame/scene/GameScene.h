@@ -15,6 +15,11 @@
 
 #include "Player.h"
 
+#include "FollowCamera.h"
+
+#include "Ground.h"
+#include "Skydome.h"
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -55,11 +60,15 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 
+	bool isDebug;
+
 	std::unique_ptr<DebugCamera> debugCamera;
+	std::unique_ptr<FollowCamera> followCamera;
 
 	ViewProjection viewProj_;
 
+	std::unique_ptr<Skydome> skydome_;
+	std::unique_ptr<Ground> ground_;
+
 	std::unique_ptr<Player> player_;
-
-
 };
