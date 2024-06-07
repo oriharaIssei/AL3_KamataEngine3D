@@ -5,7 +5,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "Model.h"
+#include "ModelSet.h"
 
 #include "memory"
 
@@ -22,13 +22,24 @@ private:
 	Input *input_ = nullptr;
 	float speed_ = 0.4f;
 
-	std::unique_ptr<Model> model_;
+
+	ModelSet head_;
+	ModelSet body_;
+	ModelSet rightArm_;
+	ModelSet leftArm_;
 
 	const ViewProjection *viewProjection_ = nullptr;
 	WorldTransform worldTransform_;
 
 	Vector3 lastDir_;
 	Vector3 move_;
+
+	/* 浮遊ギミック */
+	void InitFloatingGimmick();
+	void UpdateFloatingGimmick();
+
+	float floatingParameter_;
+	float floatingAmplitude_;
 public:
 	const WorldTransform &getWorldTransform()const { return worldTransform_; }
 	void setViewProjection(const ViewProjection *viewProj) { viewProjection_ = viewProj; }

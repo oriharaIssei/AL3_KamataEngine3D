@@ -45,14 +45,14 @@ void GameScene::Update() {
 		viewProj_.matView = debugCamera->GetViewProjection().matView;
 		viewProj_.matProjection = debugCamera->GetViewProjection().matProjection;
 	}
-
 #endif // _DEBUG
 	player_->Update();
+	if(!isDebug) {
+		followCamera->Update(input_);
+		viewProj_.matView = followCamera->getViewProjection().matView;
+		viewProj_.matProjection = followCamera->getViewProjection().matProjection;
+	}
 
-	followCamera->Update(input_);
-
-	viewProj_.matView = followCamera->getViewProjection().matView;
-	viewProj_.matProjection = followCamera->getViewProjection().matProjection;
 	viewProj_.TransferMatrix();
 }
 

@@ -113,6 +113,7 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
+    <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="scene\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\Ground\Ground.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Matrix4x4.h" />
+    <ClInclude Include="math\MyMath.h" />
     <ClInclude Include="math\Transform.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="scene\FollowCamera\FollowCamera.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\Ground\Ground.h" />
+    <ClInclude Include="scene\ModelSet.h" />
     <ClInclude Include="scene\Player\Player.h" />
     <ClInclude Include="scene\Skydome\Skydome.h" />
   </ItemGroup>
