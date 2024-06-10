@@ -24,6 +24,9 @@ void GameScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Init();
 
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Init();
+
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init();
 	ground_ = std::make_unique<Ground>();
@@ -47,6 +50,9 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 	player_->Update();
+	
+	enemy_->Update();
+	
 	if(!isDebug) {
 		followCamera->Update(input_);
 		viewProj_.matView = followCamera->getViewProjection().matView;
@@ -87,6 +93,7 @@ void GameScene::Draw() {
 	skydome_->Draw(viewProj_);
 	ground_->Draw(viewProj_);
 
+	enemy_->Draw(viewProj_);
 	player_->Draw(viewProj_);
 
 	// 3Dオブジェクト描画後処理

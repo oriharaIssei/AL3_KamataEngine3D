@@ -7,7 +7,11 @@
 
 #include "Model.h"
 
-struct ModelSet {
+struct PartsModel {
+	void Init(Model *parts) {
+		model.reset(parts);
+		worldTransform.Initialize();
+	}
 	std::unique_ptr<Model> model;
 
 	WorldTransform worldTransform;

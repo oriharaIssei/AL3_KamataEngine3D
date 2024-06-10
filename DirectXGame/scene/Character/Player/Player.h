@@ -2,34 +2,22 @@
 
 #include "Input.h"
 
-#include "ViewProjection.h"
-#include "WorldTransform.h"
-
-#include "ModelSet.h"
-
-#include "memory"
+#include "BaseCharacter.h"
 
 #include "Vector2.h"
 #include <stdint.h>
 
-class Player {
+class Player :public BaseCharacter {
 public:
-	void Init();
-	void Update();
-	void Draw(const ViewProjection &viewProj);
+	void Init()override;
+	void Update()override;
+	void Draw(const ViewProjection &viewProj)override;
 
 private:
 	Input *input_ = nullptr;
 	float speed_ = 0.4f;
 
-
-	ModelSet head_;
-	ModelSet body_;
-	ModelSet rightArm_;
-	ModelSet leftArm_;
-
 	const ViewProjection *viewProjection_ = nullptr;
-	WorldTransform worldTransform_;
 
 	Vector3 lastDir_;
 	Vector3 move_;

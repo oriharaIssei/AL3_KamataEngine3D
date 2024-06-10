@@ -8,12 +8,13 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "memory"
+#include <memory>
 
 #include "Model.h"
 #include "Sprite.h"
 
 #include "Player.h"
+#include "Enemy/Enemy.h"
 
 #include "FollowCamera.h"
 
@@ -71,4 +72,5 @@ private: // メンバ変数
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<Enemy> enemy_;
 };
