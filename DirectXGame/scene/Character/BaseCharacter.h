@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <memory>
 
 #include <string>
@@ -20,7 +20,7 @@ protected:
 	/// <summary>
 	/// Character の パーツ
 	/// </summary>
-	std::map<std::string,std::unique_ptr<PartsModel>> partsModels_;
+	std::unordered_map<std::string,std::unique_ptr<PartsModel>> partsModels_;
 
 	WorldTransform worldTransform_;
 };

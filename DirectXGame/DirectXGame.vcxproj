@@ -112,6 +112,7 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\Easing.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="scene\Character\BaseCharacter.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="input\Input.h" />
+    <ClInclude Include="math\Easing.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\MyMath.h" />
     <ClInclude Include="math\Transform.h" />

@@ -59,12 +59,12 @@ void Enemy::Draw(const ViewProjection &viewProj) {
 void Enemy::WalkMotion() {
 	const uint16_t roopFrame = 40;
 	const float updatePerParameter = 2 * std::numbers::pi_v<float> / (float)roopFrame;
-	const float amplitude = 0.7f;
+	const float amplitude = 2.0f;
 
 	walkParameter_ += updatePerParameter;
 	walkParameter_ = std::fmod(walkParameter_,std::numbers::pi_v<float>);
 
-	const float cos = std::cos(walkParameter_);
+	const float cos = std::cos(updatePerParameter);
 
 	partsModels_["Left_Arm"]->worldTransform.rotation_.x = cos * amplitude;
 	partsModels_["Right_Arm"]->worldTransform.rotation_.x = cos * amplitude;
