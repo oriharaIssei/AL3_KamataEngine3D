@@ -7,16 +7,18 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 
+#include "GlobalVariables.h"
+
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	WinApp* win = nullptr;
-	DirectXCommon* dxCommon = nullptr;
+int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int) {
+	WinApp *win = nullptr;
+	DirectXCommon *dxCommon = nullptr;
 	// 汎用機能
-	Input* input = nullptr;
-	Audio* audio = nullptr;
-	AxisIndicator* axisIndicator = nullptr;
-	PrimitiveDrawer* primitiveDrawer = nullptr;
-	GameScene* gameScene = nullptr;
+	Input *input = nullptr;
+	Audio *audio = nullptr;
+	AxisIndicator *axisIndicator = nullptr;
+	PrimitiveDrawer *primitiveDrawer = nullptr;
+	GameScene *gameScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -28,8 +30,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region 汎用機能初期化
 	// ImGuiの初期化
-	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(win, dxCommon);
+	ImGuiManager *imguiManager = ImGuiManager::GetInstance();
+	imguiManager->Initialize(win,dxCommon);
 
 	// 入力の初期化
 	input = Input::GetInstance();
@@ -44,7 +46,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::Load("white1x1.png");
 
 	// スプライト静的初期化
-	Sprite::StaticInitialize(dxCommon->GetDevice(), WinApp::kWindowWidth, WinApp::kWindowHeight);
+	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kWindowWidth,WinApp::kWindowHeight);
 
 	// 3Dモデル静的初期化
 	Model::StaticInitialize();
@@ -62,9 +64,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene->Initialize();
 
 	// メインループ
-	while (true) {
+	while(true) {
 		// メッセージ処理
-		if (win->ProcessMessage()) {
+		if(win->ProcessMessage()) {
 			break;
 		}
 
@@ -72,6 +74,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
+		// グローバル変数の更新
+		GlobalVariables::getInstance()->Update();
 		// ゲームシーンの毎フレーム処理
 		gameScene->Update();
 		// 軸表示の更新

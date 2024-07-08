@@ -45,14 +45,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\External\DirectXTex\include;$(ProjectDir)..\External\imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\External\DirectXTex\include;$(ProjectDir)..\External\nlohmann;$(ProjectDir)..\External\imgui;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\KamataEngineLib\$(Configuration);$(ProjectDir)..\External\DirectXTex\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\External\DirectXTex\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\External\DirectXTex\include;$(ProjectDir)..\External\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\KamataEngineLib\$(Configuration);$(ProjectDir)..\External\DirectXTex\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)scene/Ground;$(ProjectDir)scene/Skydome;$(ProjectDir)scene/FollowCamera;$(ProjectDir)scene/Character/Player;$(ProjectDir)scene/Character;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)scene/Ground;$(ProjectDir)scene/Skydome;$(ProjectDir)scene/FollowCamera;$(ProjectDir)scene/Character/Player;$(ProjectDir)scene/Character;$(ProjectDir)scene/GlobalVariables;$(ProjectDir)scene;$(ProjectDir);$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -119,6 +119,7 @@
     <ClCompile Include="scene\Character\Enemy\Enemy.cpp" />
     <ClCompile Include="scene\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="scene\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="scene\Ground\Ground.cpp" />
     <ClCompile Include="scene\Character\Player\Player.cpp" />
     <ClCompile Include="scene\Skydome\Skydome.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="scene\Character\Enemy\Enemy.h" />
     <ClInclude Include="scene\FollowCamera\FollowCamera.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="scene\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="scene\Ground\Ground.h" />
     <ClInclude Include="scene\PartsModel.h" />
     <ClInclude Include="scene\Character\Player\Player.h" />

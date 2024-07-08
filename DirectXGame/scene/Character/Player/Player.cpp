@@ -4,9 +4,11 @@
 
 #include "TextureManager.h"
 
+#include "GlobalVariables.h"
+
 #include "Easing.h"
 #include "MyMath.h"
-#include "numbers"
+#include <numbers>
 
 void Player::Init() {
 	partsModels_["Body"].reset(new PartsModel());
@@ -41,6 +43,12 @@ void Player::Init() {
 
 	currentBehavior_ = Behavior::kRoot;
 	BehaviorRootInit();
+
+	GlobalVariables *glovalVariables = GlobalVariables::getInstance();
+	glovalVariables->CreateGroup("Player");
+	glovalVariables->setValue("Player","speed",speed_);
+	glovalVariables->setValue("Player","dash speed",workDash_.speed_);
+	glovalVariables->setValue("Player","translate",worldTransform_.translation_);
 }
 
 void Player::Update() {
