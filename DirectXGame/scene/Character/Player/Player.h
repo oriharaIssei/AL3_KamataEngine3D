@@ -14,17 +14,22 @@
 class Player :public BaseCharacter {
 	enum class Behavior {
 		kRoot,
-		kAttack
+		kAttack,
+		kDash
 	};
 public:
 	void Init()override;
 	void Update()override;
 	void Draw(const ViewProjection &viewProj)override;
 private:
-	void BehaviorRootUpdate();
 	void BehaviorRootInit();
-	void BehaviorAttackUpdate();
+	void BehaviorRootUpdate();
+
 	void BehaviorAttackInit();
+	void BehaviorAttackUpdate();
+
+	void BehaviorDashInit();
+	void BehaviorDashUpdate();
 private:
 	Input *input_ = nullptr;
 	float speed_ = 0.4f;
@@ -44,9 +49,19 @@ private:
 	float floatingParameter_;
 	float floatingAmplitude_;
 
-	/* BehaviorAttack用 */
-	float t_;
-	float maxT_;
+	struct WorkAttack {
+		float t_;
+		float maxT_;
+	};
+	WorkAttack workAttack_;
+
+	struct WorkDash {
+		float speed_ = 1.8f;
+
+		float t_;
+		float maxT_ = 12;
+	};
+	WorkDash workDash_;
 
 public:
 	const WorldTransform &getWorldTransform()const { return worldTransform_; }

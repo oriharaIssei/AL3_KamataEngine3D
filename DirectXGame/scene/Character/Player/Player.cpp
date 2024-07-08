@@ -33,11 +33,11 @@ void Player::Init() {
 	partsModels_["RightArm"]->worldTransform.translation_ = {2.0f,4.9f,0.0f};
 	partsModels_["LeftArm"]->worldTransform.translation_ = {-2.0f,4.9f,0.0f};
 
+	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
+
 	input_ = Input::GetInstance();
 
 	InitFloatingGimmick();
-
-	maxT_ = 36;
 
 	currentBehavior_ = Behavior::kRoot;
 	BehaviorRootInit();
@@ -50,13 +50,16 @@ void Player::Update() {
 
 		switch(currentBehavior_) {
 		case Player::Behavior::kRoot:
-		BehaviorRootInit();
-		break;
+			BehaviorRootInit();
+			break;
 		case Player::Behavior::kAttack:
-		BehaviorAttackInit();
-		break;
+			BehaviorAttackInit();
+			break;
+		case Behavior::kDash:
+			BehaviorDashInit();
+			break;
 		default:
-		break;
+			break;
 		}
 	}
 
@@ -77,16 +80,16 @@ void Player::Update() {
 
 	switch(currentBehavior_) {
 	case Behavior::kRoot:
-	BehaviorRootUpdate();
-	if(input_->TriggerKey(DIK_SPACE)) {
-		behaviorRequest_ = Behavior::kAttack;
-	}
-	break;
+		BehaviorRootUpdate();
+		break;
 	case Behavior::kAttack:
-	BehaviorAttackUpdate();
-	break;
+		BehaviorAttackUpdate();
+		break;
+	case Behavior::kDash:
+		BehaviorDashUpdate();
+		break;
 	default:
-	break;
+		break;
 	}
 
 	worldTransform_.UpdateMatrix();
@@ -100,57 +103,82 @@ void Player::Draw(const ViewProjection &viewProj) {
 	BaseCharacter::Draw(viewProj);
 }
 
-void Player::BehaviorRootUpdate() {
-	move_ = {static_cast<float>(input_->PushKey(DIK_D) - input_->PushKey(DIK_A)),0.0f,static_cast<float>(input_->PushKey(DIK_W) - input_->PushKey(DIK_S))};
-
-	move_ = move_.Normalize() * speed_;
-	if(viewProjection_) {
-		move_ = TransformVector(move_,MakeMatrix::RotateXYZ(viewProjection_->rotation_));
-	}
-	if(move_.length() > 0.1f) {
-		lastDir_ = move_.Normalize();
-	}
-
-	UpdateFloatingGimmick();
-
-	worldTransform_.translation_ += move_;
-
-	worldTransform_.rotation_.y = lerpShortAngle(worldTransform_.rotation_.y,atan2(lastDir_.x,lastDir_.z),0.1f);
-}
-
 void Player::BehaviorRootInit() {
 	partsModels_["Body"]->worldTransform.translation_.y = 2.2f;
-	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
+	partsModels_["Weapon"]->worldTransform.rotation_ = {0.0f,0.0f,0.0f};
 	partsModels_["RightArm"]->worldTransform.translation_ = {2.0f,4.9f,0.0f};
 	partsModels_["LeftArm"]->worldTransform.translation_ = {-2.0f,4.9f,0.0f};
 }
 
-void Player::BehaviorAttackUpdate() {
-	++t_;
-	if(t_ == 12) {
-		worldTransform_.translation_ += TransformNormal({0,0,3.0f},MakeMatrix::RotateXYZ(worldTransform_.rotation_));
-
-	} else if(t_ == maxT_) {
-		partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
-		behaviorRequest_ = Behavior::kRoot;
+void Player::BehaviorRootUpdate() {
+	if(input_->TriggerKey(DIK_SPACE)) {
+		behaviorRequest_ = Behavior::kAttack;
+	} else if(input_->TriggerKey(DIK_LSHIFT)) {
+		behaviorRequest_ = Behavior::kDash;
 	}
 
-	float easedArmRotate = EasingLerp<float>(Easing::easeOutQuart,(t_ / maxT_),-2,0);
+	move_ = {static_cast<float>(input_->PushKey(DIK_D) - input_->PushKey(DIK_A)),0.0f,static_cast<float>(input_->PushKey(DIK_W) - input_->PushKey(DIK_S))};
 
-	partsModels_["LeftArm"]->worldTransform.rotation_.x = easedArmRotate;
-	partsModels_["RightArm"]->worldTransform.rotation_.x = easedArmRotate;
+	if(viewProjection_) {
+		move_ = TransformVector(move_,MakeMatrix::RotateXYZ(viewProjection_->rotation_));
+	}
 
-	partsModels_["Weapon"]->worldTransform.rotation_.x = EasingLerp<float>(Easing::easeOutQuart,t_ / maxT_,0,2);
+	if(move_.length() > 0.1f) {
+		lastDir_ = move_.Normalize();
+	}
+
+	move_ = move_.Normalize() * speed_;
+
+	worldTransform_.translation_ += move_;
+
+	worldTransform_.rotation_.y = lerpShortAngle(worldTransform_.rotation_.y,atan2(lastDir_.x,lastDir_.z),0.1f);
+
+	UpdateFloatingGimmick();
 }
 
 void Player::BehaviorAttackInit() {
-	t_ = 0;
+	workAttack_.t_ = 0;
+	workAttack_.maxT_ = 24;
 	partsModels_["LeftArm"]->worldTransform.rotation_.x = -2.0f;
 	partsModels_["RightArm"]->worldTransform.rotation_.x = -2.0f;
 
 	partsModels_["Body"]->worldTransform.rotation_ = {0,0,0};
 	partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
 	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
+}
+
+void Player::BehaviorAttackUpdate() {
+	++workAttack_.t_;
+	if(workAttack_.t_ == 18) {
+		worldTransform_.translation_ += TransformNormal({0,0,3.0f},MakeMatrix::RotateXYZ(worldTransform_.rotation_));
+
+	} else if(workAttack_.t_ == workAttack_.maxT_) {
+		partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
+		behaviorRequest_ = Behavior::kRoot;
+		return;
+	}
+
+	float easedArmRotate = EasingLerp<float>(Easing::easeOutQuart,(workAttack_.t_ / workAttack_.maxT_),-2,0);
+
+	partsModels_["LeftArm"]->worldTransform.rotation_.x = easedArmRotate;
+	partsModels_["RightArm"]->worldTransform.rotation_.x = easedArmRotate;
+
+	partsModels_["Weapon"]->worldTransform.rotation_.x = EasingLerp<float>(Easing::easeOutQuart,workAttack_.t_ / workAttack_.maxT_,0,2);
+}
+
+void Player::BehaviorDashInit() {
+	// ※ lastDir_.yは何も入っていない ===========================
+	workDash_.t_ = 0;
+}
+
+void Player::BehaviorDashUpdate() {
+	worldTransform_.translation_ += lastDir_.Normalize() * workDash_.speed_;
+	++workDash_.t_;
+
+	if(workDash_.t_ >= workDash_.maxT_) {
+		behaviorRequest_ = Behavior::kRoot;
+		return;
+	}
 }
 
 void Player::InitFloatingGimmick() {
