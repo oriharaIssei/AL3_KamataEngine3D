@@ -15,7 +15,8 @@ class Player :public BaseCharacter{
 	enum class Behavior{
 		kRoot,
 		kAttack,
-		kDash
+		kDash,
+		kJump
 	};
 public:
 	void Init()override;
@@ -31,6 +32,9 @@ private:
 	void BehaviorDashInit();
 	void BehaviorDashUpdate();
 
+	void BehaviorJumpInit();
+	void BehaviorJumpUpdate();
+
 	void ApplyGlobalVariables();
 private:
 	Input *input_ = nullptr;
@@ -43,6 +47,8 @@ private:
 
 	Vector3 lastDir_;
 	Vector3 move_;
+
+	Vector3 velocity_;
 
 	/* 浮遊ギミック */
 	void InitFloatingGimmick();
@@ -64,6 +70,8 @@ private:
 		float maxT_ = 12;
 	};
 	WorkDash workDash_;
+
+	float jumpPowar_=5.0f;
 
 public:
 	const WorldTransform &getWorldTransform()const{ return worldTransform_; }

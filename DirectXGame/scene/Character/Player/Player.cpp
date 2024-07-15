@@ -48,6 +48,7 @@ void Player::Init(){
 	glovalVariables->CreateGroup("Player");
 	glovalVariables->addValue("Player","speed",speed_);
 	glovalVariables->addValue("Player","dash speed",workDash_.speed_);
+	glovalVariables->addValue("Player","JumpPowar",jumpPowar_);
 }
 
 void Player::Update(){
@@ -57,14 +58,17 @@ void Player::Update(){
 		behaviorRequest_ = std::nullopt;
 
 		switch(currentBehavior_){
-		case Player::Behavior::kRoot:
+		case Behavior::kRoot:
 			BehaviorRootInit();
 			break;
-		case Player::Behavior::kAttack:
+		case Behavior::kAttack:
 			BehaviorAttackInit();
 			break;
 		case Behavior::kDash:
 			BehaviorDashInit();
+			break;
+		case Behavior::kJump:
+			BehaviorJumpInit();
 			break;
 		default:
 			break;
@@ -96,6 +100,8 @@ void Player::Update(){
 	case Behavior::kDash:
 		BehaviorDashUpdate();
 		break;
+	case Behavior::kJump:
+		BehaviorJumpUpdate();
 	default:
 		break;
 	}
@@ -119,10 +125,12 @@ void Player::BehaviorRootInit(){
 }
 
 void Player::BehaviorRootUpdate(){
-	if(input_->TriggerKey(DIK_SPACE)){
+	if(input_->TriggerKey(DIK_E)){
 		behaviorRequest_ = Behavior::kAttack;
 	} else if(input_->TriggerKey(DIK_LSHIFT)){
 		behaviorRequest_ = Behavior::kDash;
+	} else if(input_->TriggerKey(DIK_SPACE)){
+		behaviorRequest_ = Behavior::kJump;
 	}
 
 	move_ = {static_cast<float>(input_->PushKey(DIK_D) - input_->PushKey(DIK_A)),0.0f,static_cast<float>(input_->PushKey(DIK_W) - input_->PushKey(DIK_S))};
@@ -135,9 +143,9 @@ void Player::BehaviorRootUpdate(){
 		lastDir_ = move_.Normalize();
 	}
 
-	move_ = move_.Normalize() * speed_;
+	velocity_ = move_.Normalize() * speed_;
 
-	worldTransform_.translation_ += move_;
+	worldTransform_.translation_ += velocity_;
 
 	worldTransform_.rotation_.y = lerpShortAngle(worldTransform_.rotation_.y,atan2(lastDir_.x,lastDir_.z),0.1f);
 
@@ -189,12 +197,33 @@ void Player::BehaviorDashUpdate(){
 	}
 }
 
+void Player::BehaviorJumpInit(){
+	partsModels_["Body"]->worldTransform.translation_.y = 0;
+
+	partsModels_["RightArm"]->worldTransform.rotation_.x = 0;
+	partsModels_["LeftArm"]->worldTransform.rotation_.x = 0;
+
+	velocity_.y = jumpPowar_;
+}
+
+void Player::BehaviorJumpUpdate(){
+	const float gravityAccel = -0.05f;
+	velocity_.y += gravityAccel;
+	worldTransform_.translation_ += velocity_;
+	if(worldTransform_.translation_.y <= 0){
+		worldTransform_.translation_.y = 0;
+
+		behaviorRequest_ = Behavior::kRoot;
+	}
+}
+
 void Player::ApplyGlobalVariables(){
 	GlobalVariables *variables = GlobalVariables::getInstance();
 
 	std::string groupName = "Player";
 	speed_ = variables->getValue<float>(groupName,"speed");
 	workDash_.speed_ = variables->getValue<float>(groupName,"dash speed");
+	jumpPowar_ = variables->getValue<float>(groupName,"JumpPowar");
 }
 
 void Player::InitFloatingGimmick(){
