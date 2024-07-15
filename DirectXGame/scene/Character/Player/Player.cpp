@@ -10,7 +10,7 @@
 #include "MyMath.h"
 #include <numbers>
 
-void Player::Init() {
+void Player::Init(){
 	partsModels_["Body"].reset(new PartsModel());
 	partsModels_["Body"]->Init(Model::CreateFromOBJ("Player_Body"));
 	partsModels_["Head"].reset(new PartsModel());
@@ -46,17 +46,17 @@ void Player::Init() {
 
 	GlobalVariables *glovalVariables = GlobalVariables::getInstance();
 	glovalVariables->CreateGroup("Player");
-	glovalVariables->setValue("Player","speed",speed_);
-	glovalVariables->setValue("Player","dash speed",workDash_.speed_);
-	glovalVariables->setValue("Player","translate",worldTransform_.translation_);
+	glovalVariables->addValue("Player","speed",speed_);
+	glovalVariables->addValue("Player","dash speed",workDash_.speed_);
 }
 
-void Player::Update() {
-	if(behaviorRequest_) {
+void Player::Update(){
+	ApplyGlobalVariables();
+	if(behaviorRequest_){
 		currentBehavior_ = behaviorRequest_.value();
 		behaviorRequest_ = std::nullopt;
 
-		switch(currentBehavior_) {
+		switch(currentBehavior_){
 		case Player::Behavior::kRoot:
 			BehaviorRootInit();
 			break;
@@ -72,9 +72,9 @@ void Player::Update() {
 	}
 
 	ImGui::Begin("PlayerParts");
-	for(auto &part : partsModels_) {
+	for(auto &part : partsModels_){
 		std::string labelString = part.first;
-		if(ImGui::TreeNode(labelString.c_str())) {
+		if(ImGui::TreeNode(labelString.c_str())){
 			ImGui::TreePop();
 			labelString += " Scale";
 			ImGui::DragFloat3(labelString.c_str(),&part.second->worldTransform.scale_.x,0.1f);
@@ -86,7 +86,7 @@ void Player::Update() {
 	}
 	ImGui::End();
 
-	switch(currentBehavior_) {
+	switch(currentBehavior_){
 	case Behavior::kRoot:
 		BehaviorRootUpdate();
 		break;
@@ -102,36 +102,36 @@ void Player::Update() {
 
 	worldTransform_.UpdateMatrix();
 
-	for(auto &part : partsModels_) {
+	for(auto &part : partsModels_){
 		part.second->worldTransform.UpdateMatrix();
 	}
 }
 
-void Player::Draw(const ViewProjection &viewProj) {
+void Player::Draw(const ViewProjection &viewProj){
 	BaseCharacter::Draw(viewProj);
 }
 
-void Player::BehaviorRootInit() {
+void Player::BehaviorRootInit(){
 	partsModels_["Body"]->worldTransform.translation_.y = 2.2f;
 	partsModels_["Weapon"]->worldTransform.rotation_ = {0.0f,0.0f,0.0f};
 	partsModels_["RightArm"]->worldTransform.translation_ = {2.0f,4.9f,0.0f};
 	partsModels_["LeftArm"]->worldTransform.translation_ = {-2.0f,4.9f,0.0f};
 }
 
-void Player::BehaviorRootUpdate() {
-	if(input_->TriggerKey(DIK_SPACE)) {
+void Player::BehaviorRootUpdate(){
+	if(input_->TriggerKey(DIK_SPACE)){
 		behaviorRequest_ = Behavior::kAttack;
-	} else if(input_->TriggerKey(DIK_LSHIFT)) {
+	} else if(input_->TriggerKey(DIK_LSHIFT)){
 		behaviorRequest_ = Behavior::kDash;
 	}
 
 	move_ = {static_cast<float>(input_->PushKey(DIK_D) - input_->PushKey(DIK_A)),0.0f,static_cast<float>(input_->PushKey(DIK_W) - input_->PushKey(DIK_S))};
 
-	if(viewProjection_) {
+	if(viewProjection_){
 		move_ = TransformVector(move_,MakeMatrix::RotateXYZ(viewProjection_->rotation_));
 	}
 
-	if(move_.length() > 0.1f) {
+	if(move_.length() > 0.1f){
 		lastDir_ = move_.Normalize();
 	}
 
@@ -144,7 +144,7 @@ void Player::BehaviorRootUpdate() {
 	UpdateFloatingGimmick();
 }
 
-void Player::BehaviorAttackInit() {
+void Player::BehaviorAttackInit(){
 	workAttack_.t_ = 0;
 	workAttack_.maxT_ = 24;
 	partsModels_["LeftArm"]->worldTransform.rotation_.x = -2.0f;
@@ -155,12 +155,12 @@ void Player::BehaviorAttackInit() {
 	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
 }
 
-void Player::BehaviorAttackUpdate() {
+void Player::BehaviorAttackUpdate(){
 	++workAttack_.t_;
-	if(workAttack_.t_ == 18) {
+	if(workAttack_.t_ == 18){
 		worldTransform_.translation_ += TransformNormal({0,0,3.0f},MakeMatrix::RotateXYZ(worldTransform_.rotation_));
 
-	} else if(workAttack_.t_ == workAttack_.maxT_) {
+	} else if(workAttack_.t_ == workAttack_.maxT_){
 		partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
 		behaviorRequest_ = Behavior::kRoot;
 		return;
@@ -174,27 +174,35 @@ void Player::BehaviorAttackUpdate() {
 	partsModels_["Weapon"]->worldTransform.rotation_.x = EasingLerp<float>(Easing::easeOutQuart,workAttack_.t_ / workAttack_.maxT_,0,2);
 }
 
-void Player::BehaviorDashInit() {
+void Player::BehaviorDashInit(){
 	// ※ lastDir_.yは何も入っていない ===========================
 	workDash_.t_ = 0;
 }
 
-void Player::BehaviorDashUpdate() {
+void Player::BehaviorDashUpdate(){
 	worldTransform_.translation_ += lastDir_.Normalize() * workDash_.speed_;
 	++workDash_.t_;
 
-	if(workDash_.t_ >= workDash_.maxT_) {
+	if(workDash_.t_ >= workDash_.maxT_){
 		behaviorRequest_ = Behavior::kRoot;
 		return;
 	}
 }
 
-void Player::InitFloatingGimmick() {
+void Player::ApplyGlobalVariables(){
+	GlobalVariables *variables = GlobalVariables::getInstance();
+
+	std::string groupName = "Player";
+	speed_ = variables->getValue<float>(groupName,"speed");
+	workDash_.speed_ = variables->getValue<float>(groupName,"dash speed");
+}
+
+void Player::InitFloatingGimmick(){
 	floatingParameter_ = 0.0f;
 	floatingAmplitude_ = 0.6f;
 }
 
-void Player::UpdateFloatingGimmick() {
+void Player::UpdateFloatingGimmick(){
 	const uint16_t roopFrame = 58;
 	const float updatePerParameter = 2 * std::numbers::pi_v<float> / (float)roopFrame;
 

@@ -10,7 +10,7 @@
 #include "GlobalVariables.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int) {
+int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	WinApp *win = nullptr;
 	DirectXCommon *dxCommon = nullptr;
 	// 汎用機能
@@ -59,14 +59,16 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int) {
 	primitiveDrawer->Initialize();
 #pragma endregion
 
+	GlobalVariables::getInstance()->LoadAllFile();
+
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize();
 
 	// メインループ
-	while(true) {
+	while(true){
 		// メッセージ処理
-		if(win->ProcessMessage()) {
+		if(win->ProcessMessage()){
 			break;
 		}
 
