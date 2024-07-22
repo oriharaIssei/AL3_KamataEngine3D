@@ -1,0 +1,30 @@
+{
+    "PlayerAttack_HammerRotating": {
+        "anticipationTime_": 0,
+        "attackTime_": 20,
+        "chargeRightArmRotate_": [
+            -1.399999976158142,
+            0.30000001192092896,
+            -1.399999976158142
+        ],
+        "chargeTime_": 8,
+        "chargeWeaponRotate_": [
+            1.5,
+            -0.30000001192092896,
+            1.5
+        ],
+        "moveSpeed_": 0.4000000059604645,
+        "recoveryTime_": 11,
+        "startRightArmRotate_": [
+            -1.5,
+            2.0999999046325684,
+            -1.5
+        ],
+        "startWeaponRotate_": [
+            1.899999976158142,
+            2.5,
+            1.899999976158142
+        ],
+        "swingRotateSpeed_": -0.20000000298023224
+    }
+}

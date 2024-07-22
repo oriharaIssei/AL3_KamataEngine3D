@@ -1,0 +1,23 @@
+{
+    "PlayerAttack_HammerSwing": {
+        "anticipationTime_": 0,
+        "attackTime_": 16,
+        "chargeTime_": 4,
+        "recoveryTime_": 3,
+        "swingLeftArmRotate_": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "swingRightArmRotate_": [
+            -1.5,
+            2.0999999046325684,
+            -1.5
+        ],
+        "swingWeaponRotate_": [
+            1.7999999523162842,
+            3.799999952316284,
+            1.7999999523162842
+        ]
+    }
+}

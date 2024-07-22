@@ -117,6 +117,9 @@
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="scene\Character\BaseCharacter.cpp" />
     <ClCompile Include="scene\Character\Enemy\Enemy.cpp" />
+    <ClCompile Include="scene\Character\Player\HammerDown.cpp" />
+    <ClCompile Include="scene\Character\Player\HammerRotating.cpp" />
+    <ClCompile Include="scene\Character\Player\HammerSwing.cpp" />
     <ClCompile Include="scene\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\GlobalVariables\GlobalVariables.cpp" />
@@ -158,6 +161,10 @@
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="scene\Character\BaseCharacter.h" />
     <ClInclude Include="scene\Character\Enemy\Enemy.h" />
+    <ClInclude Include="scene\Character\Player\HammerDown.h" />
+    <ClInclude Include="scene\Character\Player\HammerRotating.h" />
+    <ClInclude Include="scene\Character\Player\HammerSwing.h" />
+    <ClInclude Include="scene\Character\Player\IAttackBehavior.h" />
     <ClInclude Include="scene\FollowCamera\FollowCamera.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\GlobalVariables\GlobalVariables.h" />

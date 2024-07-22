@@ -1,5 +1,11 @@
 #include "Player.h"
 
+#include "IAttackBehavior.h"
+
+#include "HammerDown.h"
+#include "HammerRotating.h"
+#include "HammerSwing.h"
+
 #include "imgui.h"
 
 #include "TextureManager.h"
@@ -52,7 +58,6 @@ void Player::Init(){
 }
 
 void Player::Update(){
-	ApplyGlobalVariables();
 	if(behaviorRequest_){
 		currentBehavior_ = behaviorRequest_.value();
 		behaviorRequest_ = std::nullopt;
@@ -153,33 +158,12 @@ void Player::BehaviorRootUpdate(){
 }
 
 void Player::BehaviorAttackInit(){
-	workAttack_.t_ = 0;
-	workAttack_.maxT_ = 24;
-	partsModels_["LeftArm"]->worldTransform.rotation_.x = -2.0f;
-	partsModels_["RightArm"]->worldTransform.rotation_.x = -2.0f;
-
-	partsModels_["Body"]->worldTransform.rotation_ = {0,0,0};
-	partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
-	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
+	currentAttackBehavior_ = std::make_unique<HammerDown>(this);
+	currentAttackBehavior_->Init();
 }
 
 void Player::BehaviorAttackUpdate(){
-	++workAttack_.t_;
-	if(workAttack_.t_ == 18){
-		worldTransform_.translation_ += TransformNormal({0,0,3.0f},MakeMatrix::RotateXYZ(worldTransform_.rotation_));
-
-	} else if(workAttack_.t_ == workAttack_.maxT_){
-		partsModels_["Weapon"]->worldTransform.rotation_.x = 0;
-		behaviorRequest_ = Behavior::kRoot;
-		return;
-	}
-
-	float easedArmRotate = EasingLerp<float>(Easing::easeOutQuart,(workAttack_.t_ / workAttack_.maxT_),-2,0);
-
-	partsModels_["LeftArm"]->worldTransform.rotation_.x = easedArmRotate;
-	partsModels_["RightArm"]->worldTransform.rotation_.x = easedArmRotate;
-
-	partsModels_["Weapon"]->worldTransform.rotation_.x = EasingLerp<float>(Easing::easeOutQuart,workAttack_.t_ / workAttack_.maxT_,0,2);
+	currentAttackBehavior_->Update();
 }
 
 void Player::BehaviorDashInit(){
@@ -217,15 +201,6 @@ void Player::BehaviorJumpUpdate(){
 	}
 }
 
-void Player::ApplyGlobalVariables(){
-	GlobalVariables *variables = GlobalVariables::getInstance();
-
-	std::string groupName = "Player";
-	speed_ = variables->getValue<float>(groupName,"speed");
-	workDash_.speed_ = variables->getValue<float>(groupName,"dash speed");
-	jumpPowar_ = variables->getValue<float>(groupName,"JumpPowar");
-}
-
 void Player::InitFloatingGimmick(){
 	floatingParameter_ = 0.0f;
 	floatingAmplitude_ = 0.6f;
@@ -242,4 +217,15 @@ void Player::UpdateFloatingGimmick(){
 	partsModels_["Body"]->worldTransform.translation_.y = sin * floatingAmplitude_;
 
 	partsModels_["Body"]->worldTransform.rotation_.y = -sin * 2.0f * (floatingAmplitude_);
+}
+
+void Player::TransitionAttackBehavior(IAttackBehavior *nextBehavior){
+	if(nextBehavior){
+		currentAttackBehavior_.reset(nextBehavior);
+		currentAttackBehavior_->Init();
+		return;
+	}
+	currentAttackBehavior_.release();
+	currentAttackBehavior_ = nullptr;
+	behaviorRequest_ = Behavior::kRoot;
 }

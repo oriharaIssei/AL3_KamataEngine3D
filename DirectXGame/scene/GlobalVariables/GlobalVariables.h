@@ -29,18 +29,32 @@ private:
 	GlobalVariables(const GlobalVariables &) = delete;
 	GlobalVariables *operator=(GlobalVariables &) = delete;
 private:
-	using Item = std::variant<int32_t,float,Vector3>;
-	using Group = std::map <std::string,Item>;
+	struct Item{
+		std::variant<int32_t,float,Vector3> value;
+		std::variant<int32_t *,float *,Vector3 *> valuePtr;
+	};
+	using Group = std::map<std::string,Item>;
 
 	std::map<std::string,Group> datas_;
 public:
-	void setValue(const std::string &groupName,const std::string &itemName,int32_t value);
-	void setValue(const std::string &groupName,const std::string &itemName,float value);
-	void setValue(const std::string &groupName,const std::string &itemName,Vector3 value);
+	template<typename T>
+	void setValue(const std::string &groupName,const std::string &itemName,T &value){
+		Group &group = datas_[groupName];
+		Item newItem = {value,&value};
+		group[itemName] = newItem;
+	}
 
-	bool addValue(const std::string &groupName,const std::string &itemName,int32_t value);
-	bool addValue(const std::string &groupName,const std::string &itemName,float value);
-	bool addValue(const std::string &groupName,const std::string &itemName,Vector3 value);
+	template<typename T>
+	bool addValue(const std::string &groupName,const std::string &itemName,T &value){
+		auto &group = datas_[groupName];
+		auto itemItr = group.find(itemName);
+		if(itemItr != group.end()){
+			value = std::get<T>(itemItr->second.value);
+			return false;
+		}
+		setValue(groupName,itemName,value);
+		return true;
+	}
 
 	template<typename T>
 	T getValue(const std::string &groupName,const std::string &itemName) const{
@@ -54,7 +68,7 @@ public:
 
 		// 指定された型で値を取得
 		try{
-			return std::get<T>(itemItr->second);
+			return std::get<T>(itemItr->second.value);
 		} catch(const std::bad_variant_access &){
 			throw std::runtime_error("Incorrect type requested");
 		}

@@ -43,15 +43,21 @@ void GlobalVariables::Update(){
 
 			const std::string &itemName = itemItr->first;
 			Item &item = itemItr->second;
-			if(std::holds_alternative<int32_t>(item)){
-				int32_t *valuePtr = std::get_if<int32_t>(&item);
-				ImGui::SliderInt(itemName.c_str(),valuePtr,0,100);
-			} else if(std::holds_alternative<float>(item)){
-				float *valuePtr = std::get_if<float>(&item);
-				ImGui::SliderFloat(itemName.c_str(),valuePtr,-10,10);
-			} else if(std::holds_alternative<Vector3>(item)){
-				Vector3 *valuePtr = std::get_if<Vector3>(&item);
-				ImGui::SliderFloat3(itemName.c_str(),reinterpret_cast<float *>(valuePtr),-10,10);
+			if(std::holds_alternative<int32_t>(item.value)){
+				int32_t *valuePtr = std::get_if<int32_t>(&item.value);
+				ImGui::DragInt(itemName.c_str(),valuePtr,1);
+				auto intPtr = std::get_if<int32_t *>(&item.valuePtr);
+				**intPtr = *valuePtr;
+			} else if(std::holds_alternative<float>(item.value)){
+				float *valuePtr = std::get_if<float>(&item.value);
+				ImGui::DragFloat(itemName.c_str(),valuePtr,0.1f);
+				auto intPtr = std::get_if<float *>(&item.valuePtr);
+				**intPtr = *valuePtr;
+			} else if(std::holds_alternative<Vector3>(item.value)){
+				Vector3 *valuePtr = std::get_if<Vector3>(&item.value);
+				ImGui::DragFloat3(itemName.c_str(),reinterpret_cast<float *>(valuePtr),0.1f);
+				auto intPtr = std::get_if<Vector3 *>(&item.valuePtr);
+				**intPtr = *valuePtr;
 			}
 		}
 
@@ -121,7 +127,8 @@ void GlobalVariables::LoadFile(const std::string &groupName){
 		} else if(itemItr->is_number_float()){
 			// float なら
 			double value = itemItr->get<double>();
-			setValue(groupName,itemName,static_cast<float>(value));
+			float fValue = static_cast<float>(value);
+			setValue(groupName,itemName,fValue);
 		} else if(itemItr->is_array() && itemItr->size()){
 			// Vector3 なら
 			Vector3 value(itemItr->at(0),itemItr->at(1),itemItr->at(0));
@@ -145,12 +152,12 @@ void GlobalVariables::SaveFile(const std::string &groupName){
 		const std::string &itemName = itemItr->first;
 		Item &item = itemItr->second;
 
-		if(std::holds_alternative<int32_t>(item)){
-			root[groupName][itemName] = std::get<int32_t>(item);
-		} else if(std::holds_alternative<float>(item)){
-			root[groupName][itemName] = std::get<float>(item);
-		} else if(std::holds_alternative<Vector3>(item)){
-			Vector3 value = std::get<Vector3>(item);
+		if(std::holds_alternative<int32_t>(item.value)){
+			root[groupName][itemName] = std::get<int32_t>(item.value);
+		} else if(std::holds_alternative<float>(item.value)){
+			root[groupName][itemName] = std::get<float>(item.value);
+		} else if(std::holds_alternative<Vector3>(item.value)){
+			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = json::array({value.x,value.y,value.z});
 		}
 
@@ -175,52 +182,4 @@ void GlobalVariables::SaveFile(const std::string &groupName){
 		ofs << std::setw(4) << root << std::endl;
 		ofs.close();
 	}
-}
-
-void GlobalVariables::setValue(const std::string &groupName,const std::string &itemName,int32_t value){
-	Group &group = datas_[groupName];
-	Item newItem{};
-	newItem = value;
-	group[itemName] = newItem;
-}
-
-void GlobalVariables::setValue(const std::string &groupName,const std::string &itemName,float value){
-	Group &group = datas_[groupName];
-	Item newItem{};
-	newItem = value;
-	group[itemName] = newItem;
-}
-
-void GlobalVariables::setValue(const std::string &groupName,const std::string &itemName,Vector3 value){
-	Group &group = datas_[groupName];
-	Item newItem{};
-	newItem = value;
-	group[itemName] = newItem;
-}
-
-bool GlobalVariables::addValue(const std::string &groupName,const std::string &itemName,int32_t value){
-	if(datas_[groupName].find(itemName) != datas_[groupName].end()){
-		return false;
-	}
-
-	setValue(groupName,itemName,value);
-	return true;
-}
-
-bool GlobalVariables::addValue(const std::string &groupName,const std::string &itemName,float value){
-	if(datas_[groupName].find(itemName) != datas_[groupName].end()){
-		return false;
-	}
-
-	setValue(groupName,itemName,value);
-	return true;
-}
-
-bool GlobalVariables::addValue(const std::string &groupName,const std::string &itemName,Vector3 value){
-	if(datas_[groupName].find(itemName) != datas_[groupName].end()){
-		return false;
-	}
-
-	setValue(groupName,itemName,value);
-	return true;
 }
