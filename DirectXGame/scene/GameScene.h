@@ -18,13 +18,15 @@
 
 #include "FollowCamera.h"
 
+#include "LockOn.h"
+
 #include "Ground.h"
 #include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene{
 
 public: // メンバ関数
 	/// <summary>
@@ -66,11 +68,13 @@ private: // メンバ変数
 	std::unique_ptr<DebugCamera> debugCamera;
 	std::unique_ptr<FollowCamera> followCamera;
 
+	std::unique_ptr<LockOn> lockOn_;
+
 	ViewProjection viewProj_;
 
 	std::unique_ptr<Skydome> skydome_;
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<Enemy> enemy_;
+	std::vector<std::unique_ptr<Enemy>> enemies_;
 };

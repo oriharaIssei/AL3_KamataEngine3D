@@ -125,6 +125,7 @@
     <ClCompile Include="scene\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="scene\Ground\Ground.cpp" />
     <ClCompile Include="scene\Character\Player\Player.cpp" />
+    <ClCompile Include="scene\LockOn.cpp" />
     <ClCompile Include="scene\Skydome\Skydome.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,7 @@
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="scene\Ground\Ground.h" />
+    <ClInclude Include="scene\LockOn.h" />
     <ClInclude Include="scene\PartsModel.h" />
     <ClInclude Include="scene\Character\Player\Player.h" />
     <ClInclude Include="scene\Skydome\Skydome.h" />

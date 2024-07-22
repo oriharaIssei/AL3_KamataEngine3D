@@ -6,11 +6,11 @@
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
 
-GameScene::GameScene() {}
+GameScene::GameScene(){}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene(){}
 
-void GameScene::Initialize() {
+void GameScene::Initialize(){
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -24,8 +24,10 @@ void GameScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Init();
 
-	enemy_ = std::make_unique<Enemy>();
+	std::unique_ptr<Enemy> enemy_ = std::make_unique<Enemy>();
 	enemy_->Init();
+
+	enemies_.emplace_back(std::move(enemy_));
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init();
@@ -35,25 +37,32 @@ void GameScene::Initialize() {
 	followCamera->SetTarget(&player_->getWorldTransform());
 	player_->setViewProjection(&followCamera->getViewProjection());
 
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Init();
+
 	isDebug = false;
 }
 
-void GameScene::Update() {
+void GameScene::Update(){
 #ifdef _DEBUG
-	if(input_->TriggerKey(DIK_LCONTROL)) {
+	if(input_->TriggerKey(DIK_LCONTROL)){
 		isDebug = !isDebug;
 	}
-	if(isDebug) {
+	if(isDebug){
 		debugCamera->Update();
 		viewProj_.matView = debugCamera->GetViewProjection().matView;
 		viewProj_.matProjection = debugCamera->GetViewProjection().matProjection;
 	}
 #endif // _DEBUG
 	player_->Update();
-	
-	enemy_->Update();
-	
-	if(!isDebug) {
+
+	for(auto &enemy : enemies_){
+		enemy->Update();
+	}
+
+	lockOn_->Update(enemies_,viewProj_);
+
+	if(!isDebug){
 		followCamera->Update(input_);
 		viewProj_.matView = followCamera->getViewProjection().matView;
 		viewProj_.matProjection = followCamera->getViewProjection().matProjection;
@@ -62,7 +71,7 @@ void GameScene::Update() {
 	viewProj_.TransferMatrix();
 }
 
-void GameScene::Draw() {
+void GameScene::Draw(){
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList *commandList = dxCommon_->GetCommandList();
@@ -93,7 +102,10 @@ void GameScene::Draw() {
 	skydome_->Draw(viewProj_);
 	ground_->Draw(viewProj_);
 
-	enemy_->Draw(viewProj_);
+	for(auto &enemy : enemies_){
+		enemy->Draw(viewProj_);
+	}
+
 	player_->Draw(viewProj_);
 
 	// 3Dオブジェクト描画後処理
@@ -107,6 +119,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	lockOn_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
