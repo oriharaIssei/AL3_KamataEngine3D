@@ -5,6 +5,7 @@
 #include <array>
 
 #include "Input.h"
+#include "Model.h"
 
 #include "BaseCharacter.h"
 
@@ -15,6 +16,7 @@
 
 #include "IAttackBehavior.h"
 
+class LockOn;
 class Player :
 	public BaseCharacter{
 	enum class Behavior{
@@ -39,10 +41,30 @@ private:
 
 	void BehaviorJumpInit();
 	void BehaviorJumpUpdate();
+private:
+	struct HitEffect{
+		std::unique_ptr<Model> particleModel_;
 
+		const float maxScale_ = 3.0f;;
+		float scale_;
+		WorldTransform transform_;
+
+		std::unique_ptr<ObjectColor>color_;
+
+		const float fullTime_ = 0.7f;
+		float timer_;
+
+		void Init();
+		void Update();
+		bool getIsAlive()const{ return timer_ >= 0; }
+	};
 private:
 	Input *input_ = nullptr;
 	float speed_ = 0.4f;
+
+	std::unique_ptr<Collider> weaponCollider_;
+
+	std::vector<std::unique_ptr<HitEffect>> hitEffects_;
 
 	std::optional<Behavior> behaviorRequest_;
 	Behavior			    currentBehavior_;
@@ -50,6 +72,8 @@ private:
 	const ViewProjection *viewProjection_ = nullptr;
 
 	std::unique_ptr<IAttackBehavior> currentAttackBehavior_;
+
+	const LockOn *lockOn_;
 
 	Vector3 lastDir_;
 	Vector3 move_;
@@ -73,9 +97,13 @@ private:
 
 	float jumpPowar_ = 5.0f;
 public:
+	Collider *getWeaponCollider()const{ return weaponCollider_.get(); }
+
 	void TransitionAttackBehavior(IAttackBehavior *nextBehavior);
 
 	const Vector3 &getDir()const{ return lastDir_; }
+
+	void setLockOn(const LockOn *lockOn){ lockOn_ = lockOn; }
 
 	void setViewProjection(const ViewProjection *viewProj){ viewProjection_ = viewProj; }
 };

@@ -5,7 +5,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-class FollowCamera {
+class LockOn;
+class FollowCamera{
 public:
 	void Init();
 	void Update(const Input *input);
@@ -17,8 +18,11 @@ private:
 	float destinationAngleY_;
 	Vector3 interTarget_;
 
+	const LockOn *lockOn_;
+
 	const WorldTransform *followTarget_;
 public:
-	const ViewProjection &getViewProjection()const { return viewProj_; }
+	void SetLockOn(const LockOn *lockOn){ lockOn_ = lockOn; }
+	const ViewProjection &getViewProjection()const{ return viewProj_; }
 	void SetTarget(const WorldTransform *target);
 };

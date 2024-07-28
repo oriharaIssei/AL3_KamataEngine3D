@@ -8,12 +8,14 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+#include "Collision/Collider.h"
+
 #include "PartsModel.h"
 
 class BaseCharacter{
 public:
 	virtual ~BaseCharacter(){};
-	virtual void Init() = 0;
+	virtual void Init();
 	virtual void Update() = 0;
 	virtual void Draw(const ViewProjection &viewProj);
 protected:
@@ -22,8 +24,12 @@ protected:
 	/// </summary>
 	std::unordered_map<std::string,std::unique_ptr<PartsModel>> partsModels_;
 
+	std::unique_ptr<Collider> collider_;
+
 	WorldTransform worldTransform_;
 public:
+	Collider *getCollider()const{ return collider_.get(); }
+
 	const WorldTransform &getTransform_()const{ return worldTransform_; }
 	const WorldTransform &getWorldTransform()const{ return worldTransform_; }
 	void setTransform(const Transform &transform){

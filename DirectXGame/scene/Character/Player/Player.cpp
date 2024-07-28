@@ -11,12 +11,32 @@
 #include "TextureManager.h"
 
 #include "GlobalVariables.h"
+#include "LockOn.h"
 
 #include "Easing.h"
 #include "MyMath.h"
 #include <numbers>
 
+#include "Collision/Manager/CollisionTypeIdDef.h"
+
+constexpr float delTime = (1.0f / 60.0f);
+
 void Player::Init(){
+	BaseCharacter::Init();
+
+	collider_->Init({0.0f,4.0f,0.0f},6.0f,[this]([[maybe_unused]] Collider *collider){behaviorRequest_ = Behavior::kJump; });
+	collider_->setTransformParent(&worldTransform_);
+	collider_->setTypeID(static_cast<uint32_t>(CollisionTypeDef::kPlayer));
+
+	collider_->Init({0.0f,4.0f,0.0f},6.0f,[this]([[maybe_unused]] Collider *collider){
+		if(collider->getTypeID() != static_cast<uint32_t>(CollisionTypeDef::kEnemy)){
+			return;
+		}
+		behaviorRequest_ = Behavior::kJump; });
+	collider_->setTransformParent(&worldTransform_);
+	collider_->setTypeID(static_cast<uint32_t>(CollisionTypeDef::kPlayer));
+
+#pragma region"Parts Initialize"
 	partsModels_["Body"].reset(new PartsModel());
 	partsModels_["Body"]->Init(Model::CreateFromOBJ("Player_Body"));
 	partsModels_["Head"].reset(new PartsModel());
@@ -27,8 +47,6 @@ void Player::Init(){
 	partsModels_["LeftArm"]->Init(Model::CreateFromOBJ("Player_leftArm"));
 	partsModels_["Weapon"].reset(new PartsModel());
 	partsModels_["Weapon"]->Init(Model::CreateFromOBJ("Player_Weapon"));
-
-	worldTransform_.Initialize();
 
 	partsModels_["Body"]->worldTransform.parent_ = &worldTransform_;
 	partsModels_["Weapon"]->worldTransform.parent_ = &worldTransform_;
@@ -42,6 +60,23 @@ void Player::Init(){
 	partsModels_["LeftArm"]->worldTransform.translation_ = {-2.0f,4.9f,0.0f};
 
 	partsModels_["Weapon"]->worldTransform.translation_.y = 7.3f;
+#pragma endregion
+
+	weaponCollider_ = std::make_unique<Collider>();
+
+	weaponCollider_->Init({0.0f,7.0f,0.0f},8.0f,[this](Collider *collider){
+		if(collider->getTypeID() != static_cast<uint32_t>(CollisionTypeDef::kEnemy)){
+			return;
+		}
+		std::unique_ptr<HitEffect> effect = std::make_unique<HitEffect>();
+		effect->Init();
+		effect->transform_.translation_ = collider->getPosition();
+		effect->transform_.UpdateMatrix();
+		hitEffects_.emplace_back(std::move(effect));
+	});
+	weaponCollider_->setTransformParent(&partsModels_["Weapon"]->worldTransform);
+	weaponCollider_->setTypeID(static_cast<uint32_t>(CollisionTypeDef::kPlayerWeapon));
+
 
 	input_ = Input::GetInstance();
 
@@ -107,19 +142,36 @@ void Player::Update(){
 		break;
 	case Behavior::kJump:
 		BehaviorJumpUpdate();
+		break;
 	default:
 		break;
 	}
 
 	worldTransform_.UpdateMatrix();
 
+	collider_->Update();
+
 	for(auto &part : partsModels_){
 		part.second->worldTransform.UpdateMatrix();
+	}
+	weaponCollider_->Update();
+
+	for(auto effectItr = hitEffects_.begin(); effectItr != hitEffects_.end();){
+		HitEffect *effect = effectItr->get();
+		effect->Update();
+		if(effect->getIsAlive()){
+			++effectItr; continue;
+		}
+		effectItr = hitEffects_.erase(effectItr);
 	}
 }
 
 void Player::Draw(const ViewProjection &viewProj){
 	BaseCharacter::Draw(viewProj);
+
+	for(auto &effect : hitEffects_){
+		effect->particleModel_->Draw(effect->transform_,viewProj,effect->color_.get());
+	}
 }
 
 void Player::BehaviorRootInit(){
@@ -144,14 +196,16 @@ void Player::BehaviorRootUpdate(){
 		move_ = TransformVector(move_,MakeMatrix::RotateXYZ(viewProjection_->rotation_));
 	}
 
-	if(move_.length() > 0.1f){
-		lastDir_ = move_.Normalize();
-	}
-
 	velocity_ = move_.Normalize() * speed_;
 
 	worldTransform_.translation_ += velocity_;
-
+	if(lockOn_ && lockOn_->ExistTarget()){
+		lastDir_ = lockOn_->getTargetPos() - Vector3(worldTransform_.matWorld_[3]);
+	} else{
+		if(move_.length() > 0.1f){
+			lastDir_ = move_.Normalize();
+		}
+	}
 	worldTransform_.rotation_.y = lerpShortAngle(worldTransform_.rotation_.y,atan2(lastDir_.x,lastDir_.z),0.1f);
 
 	UpdateFloatingGimmick();
@@ -228,4 +282,28 @@ void Player::TransitionAttackBehavior(IAttackBehavior *nextBehavior){
 	currentAttackBehavior_.release();
 	currentAttackBehavior_ = nullptr;
 	behaviorRequest_ = Behavior::kRoot;
+}
+
+void Player::HitEffect::Init(){
+	particleModel_.reset(Model::CreateSphere());
+	transform_.Initialize();
+
+	scale_ = maxScale_;
+	timer_ = fullTime_;
+
+	color_ = std::make_unique<ObjectColor>();
+	color_->Initialize();
+}
+
+void Player::HitEffect::Update(){
+	timer_ -= delTime;
+	float t = timer_ / fullTime_;
+
+	color_->SetColor({1.0f,1.0f,1.0f,Lerp(1 - t,1.0f,0.0f)});
+	color_->TransferMatrix();
+
+	scale_ = Lerp(t,0.0f,maxScale_);
+
+	transform_.scale_ = {scale_,scale_,scale_};
+	transform_.UpdateMatrix();
 }

@@ -58,6 +58,11 @@ void GlobalVariables::Update(){
 				ImGui::DragFloat3(itemName.c_str(),reinterpret_cast<float *>(valuePtr),0.1f);
 				auto intPtr = std::get_if<Vector3 *>(&item.valuePtr);
 				**intPtr = *valuePtr;
+			} else if(std::holds_alternative<bool>(item.value)){
+				bool *valuePtr = std::get_if<bool>(&item.value);
+				ImGui::Checkbox(itemName.c_str(),valuePtr);
+				auto intPtr = std::get_if<bool *>(&item.valuePtr);
+				**intPtr = *valuePtr;
 			}
 		}
 
@@ -133,6 +138,9 @@ void GlobalVariables::LoadFile(const std::string &groupName){
 			// Vector3 なら
 			Vector3 value(itemItr->at(0),itemItr->at(1),itemItr->at(0));
 			setValue(groupName,itemName,value);
+		} else if(itemItr->is_boolean()){
+			bool value = itemItr->get<bool>();
+			setValue(groupName,itemName,value);
 		}
 	}
 }
@@ -159,6 +167,8 @@ void GlobalVariables::SaveFile(const std::string &groupName){
 		} else if(std::holds_alternative<Vector3>(item.value)){
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = json::array({value.x,value.y,value.z});
+		} else if(std::holds_alternative<bool>(item.value)){
+			root[groupName][itemName] = std::get<bool>(item.value);
 		}
 
 		///========================================

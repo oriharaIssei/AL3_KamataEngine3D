@@ -16,6 +16,8 @@ void LockOn::Init(){
 	sprite_.reset(Sprite::Create(TextureManager::Load("reticle.png"),{0.0f,0.0f}));
 	sprite_->SetSize({36.0f,36.0f});
 
+	target = nullptr;
+
 	input_ = Input::GetInstance();
 
 	GlobalVariables *variables = GlobalVariables::getInstance();
@@ -30,6 +32,7 @@ void LockOn::Update(const std::vector<std::unique_ptr<Enemy>> &enemies_,
 		isLocked_ = !isLocked_;
 	}
 	if(!isLocked_){
+		target = nullptr;
 		return;
 	}
 	std::list <std::pair <float,const Enemy *>>targets_;
@@ -50,6 +53,8 @@ void LockOn::Update(const std::vector<std::unique_ptr<Enemy>> &enemies_,
 	}
 
 	if(targets_.empty()){
+		isLocked_ = false;
+		target = nullptr;
 		return;
 	}
 	targets_.sort([](auto &a,auto &b){return a.second < b.second; });

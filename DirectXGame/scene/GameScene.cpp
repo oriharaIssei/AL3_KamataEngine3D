@@ -19,6 +19,9 @@ void GameScene::Initialize(){
 	followCamera = std::make_unique<FollowCamera>();
 	followCamera->Init();
 
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Init();
+
 	viewProj_.Initialize();
 
 	player_ = std::make_unique<Player>();
@@ -40,6 +43,9 @@ void GameScene::Initialize(){
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Init();
 
+	player_->setLockOn(lockOn_.get());
+	followCamera->SetLockOn(lockOn_.get());
+
 	isDebug = false;
 }
 
@@ -54,11 +60,18 @@ void GameScene::Update(){
 		viewProj_.matProjection = debugCamera->GetViewProjection().matProjection;
 	}
 #endif // _DEBUG
+	collisionManager_->Reset();
+
 	player_->Update();
+	collisionManager_->AddPushBackCollider(player_->getCollider());
+	collisionManager_->AddPushBackCollider(player_->getWeaponCollider());
 
 	for(auto &enemy : enemies_){
 		enemy->Update();
+		collisionManager_->AddPushBackCollider(enemy->getCollider());
 	}
+
+	collisionManager_->Update();
 
 	lockOn_->Update(enemies_,viewProj_);
 
@@ -98,6 +111,8 @@ void GameScene::Draw(){
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	collisionManager_->Draw(viewProj_);
 
 	skydome_->Draw(viewProj_);
 	ground_->Draw(viewProj_);

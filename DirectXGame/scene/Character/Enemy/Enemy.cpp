@@ -5,7 +5,11 @@
 #include "numbers"
 #include "stdint.h"
 
-void Enemy::Init() {
+#include "Collision/Manager/CollisionTypeIdDef.h"
+
+void Enemy::Init(){
+	BaseCharacter::Init();
+
 	partsModels_["Body"].reset(new PartsModel());
 	partsModels_["Left_Arm"].reset(new PartsModel());
 	partsModels_["Right_Arm"].reset(new PartsModel());
@@ -14,10 +18,15 @@ void Enemy::Init() {
 	partsModels_["Left_Arm"]->Init(Model::CreateFromOBJ("Enemy_Arm"));
 	partsModels_["Right_Arm"]->Init(Model::CreateFromOBJ("Enemy_Arm"));
 
-	worldTransform_.Initialize();
+	collider_->Init({0.0f,2.0f,0.0f},4.0f,[]([[maybe_unused]] Collider *collider){});
+	collider_->setTypeID(static_cast<uint32_t>(CollisionTypeDef::kEnemy));
+
+	worldTransform_.translation_ = {12.0f,0.0f,30.0f};
 	worldTransform_.UpdateMatrix();
 
-	for(auto &part : partsModels_) {
+	collider_->setTransformParent(&worldTransform_);
+
+	for(auto &part : partsModels_){
 		part.second->worldTransform.parent_ = &worldTransform_;
 	}
 
@@ -32,10 +41,10 @@ void Enemy::Init() {
 	partsModels_["Right_Arm"]->worldTransform.rotation_ = {0.0f,0.0f,-0.5f};
 }
 
-void Enemy::Update() {
+void Enemy::Update(){
 	ImGui::Begin("EnemyParts");
-	for(auto &part : partsModels_) {
-		if(ImGui::TreeNode(part.first.c_str())) {
+	for(auto &part : partsModels_){
+		if(ImGui::TreeNode(part.first.c_str())){
 			ImGui::TreePop();
 			ImGui::DragFloat3("Scale",&part.second->worldTransform.scale_.x,0.1f);
 			ImGui::DragFloat3("Rotate",&part.second->worldTransform.rotation_.x,0.1f);
@@ -47,16 +56,17 @@ void Enemy::Update() {
 
 	WalkMotion();
 
-	for(auto &part : partsModels_) {
+	for(auto &part : partsModels_){
 		part.second->worldTransform.UpdateMatrix();
 	}
+	collider_->Update();
 }
 
-void Enemy::Draw(const ViewProjection &viewProj) {
+void Enemy::Draw(const ViewProjection &viewProj){
 	BaseCharacter::Draw(viewProj);
 }
 
-void Enemy::WalkMotion() {
+void Enemy::WalkMotion(){
 	const uint16_t roopFrame = 40;
 	const float updatePerParameter = 2 * std::numbers::pi_v<float> / (float)roopFrame;
 	const float amplitude = 2.0f;

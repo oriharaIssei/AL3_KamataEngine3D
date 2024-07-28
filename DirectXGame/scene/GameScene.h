@@ -5,13 +5,16 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 
-#include "ViewProjection.h"
-#include "WorldTransform.h"
-
 #include <memory>
+
+#include "WorldTransform.h"
+#include "ViewProjection.h"
 
 #include "Model.h"
 #include "Sprite.h"
+
+#include "Ground.h"
+#include "Skydome.h"
 
 #include "Player.h"
 #include "Enemy/Enemy.h"
@@ -20,8 +23,7 @@
 
 #include "LockOn.h"
 
-#include "Ground.h"
-#include "Skydome.h"
+#include "Collision/Manager/CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -65,12 +67,14 @@ private: // メンバ変数
 
 	bool isDebug;
 
+	ViewProjection viewProj_;
+
 	std::unique_ptr<DebugCamera> debugCamera;
 	std::unique_ptr<FollowCamera> followCamera;
 
 	std::unique_ptr<LockOn> lockOn_;
 
-	ViewProjection viewProj_;
+	std::unique_ptr<CollisionManager> collisionManager_;
 
 	std::unique_ptr<Skydome> skydome_;
 	std::unique_ptr<Ground> ground_;

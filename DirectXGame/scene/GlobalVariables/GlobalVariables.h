@@ -30,8 +30,8 @@ private:
 	GlobalVariables *operator=(GlobalVariables &) = delete;
 private:
 	struct Item{
-		std::variant<int32_t,float,Vector3> value;
-		std::variant<int32_t *,float *,Vector3 *> valuePtr;
+		std::variant<int32_t,float,Vector3,bool> value;
+		std::variant<int32_t *,float *,Vector3 *,bool *> valuePtr;
 	};
 	using Group = std::map<std::string,Item>;
 
