@@ -42,6 +42,7 @@ void Enemy::Init(){
 }
 
 void Enemy::Update(){
+
 	ImGui::Begin("EnemyParts");
 	for(auto &part : partsModels_){
 		if(ImGui::TreeNode(part.first.c_str())){
@@ -54,11 +55,19 @@ void Enemy::Update(){
 
 	ImGui::End();
 
+	Vector3 newTranslation = TransformVector(worldTransform_.translation_,MakeMatrix::RotateY(0.01f));
+	Vector3 velocity = newTranslation - worldTransform_.translation_;
+	worldTransform_.translation_ = newTranslation;
+	worldTransform_.rotation_.y = atan2(velocity.x,velocity.z);
+
 	WalkMotion();
+
+	worldTransform_.UpdateMatrix();
 
 	for(auto &part : partsModels_){
 		part.second->worldTransform.UpdateMatrix();
 	}
+
 	collider_->Update();
 }
 
@@ -74,7 +83,7 @@ void Enemy::WalkMotion(){
 	walkParameter_ += updatePerParameter;
 	walkParameter_ = std::fmod(walkParameter_,std::numbers::pi_v<float>);
 
-	const float cos = std::cos(updatePerParameter);
+	const float cos = std::cos(walkParameter_);
 
 	partsModels_["Left_Arm"]->worldTransform.rotation_.x = cos * amplitude;
 	partsModels_["Right_Arm"]->worldTransform.rotation_.x = cos * amplitude;

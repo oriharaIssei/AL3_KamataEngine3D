@@ -23,8 +23,14 @@ private:
 	float radius_;
 	WorldTransform transform_;
 
+	// 無敵時間
+	float invincibleTime_ = 0.0f;
+
 	uint32_t typeID_ = 0u;
 public:
+	bool getIsInvincible()const{ return invincibleTime_ > 0; }
+	void setInvincibleTime(const float &time){ invincibleTime_ = time; }
+
 	Vector3 getPosition()const{ return transform_.matWorld_[3]; }
 	float getRadius()const{ return radius_; }
 	void setTransformParent(WorldTransform *parent){ transform_.parent_ = parent; transform_.UpdateMatrix(); }

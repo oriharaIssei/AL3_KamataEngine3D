@@ -64,10 +64,13 @@ void Player::Init(){
 
 	weaponCollider_ = std::make_unique<Collider>();
 
-	weaponCollider_->Init({0.0f,7.0f,0.0f},8.0f,[this](Collider *collider){
-		if(collider->getTypeID() != static_cast<uint32_t>(CollisionTypeDef::kEnemy)){
+	weaponCollider_->Init({0.0f,8.0f,0.0f},8.0f,[this](Collider *collider){
+		if(collider->getTypeID() != static_cast<uint32_t>(CollisionTypeDef::kEnemy) ||
+		   collider->getIsInvincible()){
 			return;
 		}
+		collider->setInvincibleTime(0.7f);
+
 		std::unique_ptr<HitEffect> effect = std::make_unique<HitEffect>();
 		effect->Init();
 		effect->transform_.translation_ = collider->getPosition();
@@ -76,7 +79,6 @@ void Player::Init(){
 	});
 	weaponCollider_->setTransformParent(&partsModels_["Weapon"]->worldTransform);
 	weaponCollider_->setTypeID(static_cast<uint32_t>(CollisionTypeDef::kPlayerWeapon));
-
 
 	input_ = Input::GetInstance();
 
@@ -182,16 +184,13 @@ void Player::BehaviorRootInit(){
 }
 
 void Player::BehaviorRootUpdate(){
-	if(input_->TriggerKey(DIK_E)){
-		behaviorRequest_ = Behavior::kAttack;
-	} else if(input_->TriggerKey(DIK_LSHIFT)){
-		behaviorRequest_ = Behavior::kDash;
-	} else if(input_->TriggerKey(DIK_SPACE)){
-		behaviorRequest_ = Behavior::kJump;
+	XINPUT_STATE gamePadState;
+
+	if(input_->GetJoystickState(0,gamePadState)){
+		move_ = {static_cast<float>(gamePadState.Gamepad.sThumbLX / SHRT_MAX),
+			0.0f,
+			static_cast<float>(gamePadState.Gamepad.sThumbLY / SHRT_MAX)};
 	}
-
-	move_ = {static_cast<float>(input_->PushKey(DIK_D) - input_->PushKey(DIK_A)),0.0f,static_cast<float>(input_->PushKey(DIK_W) - input_->PushKey(DIK_S))};
-
 	if(viewProjection_){
 		move_ = TransformVector(move_,MakeMatrix::RotateXYZ(viewProjection_->rotation_));
 	}
@@ -209,6 +208,14 @@ void Player::BehaviorRootUpdate(){
 	worldTransform_.rotation_.y = lerpShortAngle(worldTransform_.rotation_.y,atan2(lastDir_.x,lastDir_.z),0.1f);
 
 	UpdateFloatingGimmick();
+
+	if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_Y){
+		behaviorRequest_ = Behavior::kAttack;
+	} else if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB ){
+		behaviorRequest_ = Behavior::kDash;
+	} else if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_A){
+		behaviorRequest_ = Behavior::kJump;
+	}
 }
 
 void Player::BehaviorAttackInit(){

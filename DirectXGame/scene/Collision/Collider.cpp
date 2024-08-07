@@ -13,6 +13,11 @@ void Collider::Init(const Vector3 &pos,float radius,std::function<void(Collider 
 
 void Collider::Update(){
 	transform_.UpdateMatrix();
+
+	if(invincibleTime_ <= 0.0f){
+		return;
+	}
+	invincibleTime_ -= 1.0f / 60.0f;
 }
 
 void Collider::Draw(Model *model,const ViewProjection &viewProj){

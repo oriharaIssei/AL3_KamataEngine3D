@@ -28,7 +28,12 @@ void LockOn::Init(){
 
 void LockOn::Update(const std::vector<std::unique_ptr<Enemy>> &enemies_,
 					const ViewProjection &viewProj){
-	if(input_->TriggerKey(DIK_Q)){
+	XINPUT_STATE gamePadState;
+
+	if(!input_->GetJoystickState(0,gamePadState)){
+		return;
+	}
+	if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER){
 		isLocked_ = !isLocked_;
 	}
 	if(!isLocked_){
@@ -57,6 +62,7 @@ void LockOn::Update(const std::vector<std::unique_ptr<Enemy>> &enemies_,
 		target = nullptr;
 		return;
 	}
+
 	targets_.sort([](auto &a,auto &b){return a.second < b.second; });
 	target = targets_.front().second;
 

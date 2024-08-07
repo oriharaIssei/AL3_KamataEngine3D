@@ -82,7 +82,7 @@ void HammerDown::Update(){
 				host_->TransitionAttackBehavior(new HammerSwing(host_));
 				return;
 			}
-			
+
 		} else{
 			armRotateX_ = EasingLerp(Easing::easeOutQuart,static_cast<float>(phaseT_) / static_cast<float>(attackTime_),swingArmRotateX_,0.0f);
 			if(phaseT_ >= recoveryTime_){
@@ -104,7 +104,12 @@ void HammerDown::Update(){
 	if(comboNext_){
 		return;
 	}
-	if(input_->TriggerKey(DIK_E)){
+	XINPUT_STATE gamePadState;
+
+	if(!input_->GetJoystickState(0,gamePadState)){
+		return;
+	}
+	if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_Y){
 		comboNext_ = true;
 	}
 }

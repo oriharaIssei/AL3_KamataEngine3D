@@ -59,6 +59,7 @@ void HammerRotating::Update(){
 		break;
 	}
 	case InAttackBehaviorPhase::Attack:{
+		XINPUT_STATE gamePadState;
 		bodyRotate_.y += swingRotateSpeed_;
 		weaponRotate_.y += swingRotateSpeed_;
 
@@ -69,7 +70,8 @@ void HammerRotating::Update(){
 
 		if(phaseT_ >= attackTime_){
 			phaseT_ = 0;
-			if(input_->PushKey(DIK_E)){
+			input_->GetJoystickState(0,gamePadState);
+			if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_Y){
 				if(phaseT_ <= maxAttackTime_){
 					break;
 				}
@@ -111,8 +113,5 @@ void HammerRotating::Update(){
 
 	if(comboNext_){
 		return;
-	}
-	if(input_->TriggerKey(DIK_E)){
-		comboNext_ = true;
 	}
 }

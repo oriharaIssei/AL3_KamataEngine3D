@@ -9,7 +9,7 @@ public:
 	void Update()override;
 	void Draw(const ViewProjection &viewProj)override;
 private:
-private:
 	void WalkMotion();
 	float walkParameter_;
+public:
 };

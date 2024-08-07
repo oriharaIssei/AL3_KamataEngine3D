@@ -27,6 +27,7 @@ protected:
 	std::unique_ptr<Collider> collider_;
 
 	WorldTransform worldTransform_;
+
 public:
 	Collider *getCollider()const{ return collider_.get(); }
 

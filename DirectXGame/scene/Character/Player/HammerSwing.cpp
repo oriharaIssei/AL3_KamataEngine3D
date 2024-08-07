@@ -100,7 +100,12 @@ void HammerSwing::Update(){
 	if(comboNext_){
 		return;
 	}
-	if(input_->TriggerKey(DIK_E)){
+	XINPUT_STATE gamePadState;
+
+	if(!input_->GetJoystickState(0,gamePadState)){
+		return;
+	}
+	if(gamePadState.Gamepad.wButtons & XINPUT_GAMEPAD_Y){
 		comboNext_ = true;
 	}
 }

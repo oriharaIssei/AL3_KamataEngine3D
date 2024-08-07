@@ -16,7 +16,11 @@ void FollowCamera::Update(const Input *input){
 			Vector3 sub = lockOn_->getTargetPos() - Vector3(followTarget_->matWorld_[3]);
 			destinationAngleY_ = atan2(sub.x,sub.z);
 		} else{
-			destinationAngleY_ += static_cast<float>(input->PushKey(DIK_LEFT) - input->PushKey(DIK_RIGHT)) * rotationSpeed;
+			XINPUT_STATE gamePadState;
+			if(input->GetJoystickState(0,gamePadState)){
+				destinationAngleY_ += static_cast<float>(gamePadState.Gamepad.sThumbRX / SHRT_MAX) * rotationSpeed;
+			}
+
 			if(input->TriggerKey(DIK_RSHIFT)){
 				destinationAngleY_ = 0;
 			}
