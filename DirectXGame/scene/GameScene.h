@@ -60,17 +60,8 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	std::unique_ptr<DebugCamera> debugCamera_;
-	std::unique_ptr<RailCamera> railCamera_;
-
+	
 	bool isDebugCameraActive_ = false;
 	ViewProjection viewProj_;
 
-	std::unique_ptr<CollisionManager> collisionManager_;
-
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<Enemy> enemy_;
-
-	std::unique_ptr<Skydome> skydome_;
-
-	std::vector<Vector3> pointsDrawing;
 };

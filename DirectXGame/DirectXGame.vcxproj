@@ -112,18 +112,9 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="math\myMath.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
-    <ClCompile Include="scene\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
-    <ClCompile Include="scene\Bullet\PlayerBullet.cpp" />
-    <ClCompile Include="scene\Collider\Collider.cpp" />
-    <ClCompile Include="scene\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="scene\Enemy\Enemy.cpp" />
-    <ClCompile Include="scene\Player\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
-    <ClCompile Include="scene\RailCamera\RailCamera.cpp" />
-    <ClCompile Include="scene\Skydome\Skydome.cpp" />
-    <ClCompile Include="scene\TimedCall\TimedCall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\ImGuiManager.h" />
@@ -150,21 +141,12 @@
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="math\myMath.h" />
-    <ClInclude Include="scene\Bullet\EnemyBullet.h" />
-    <ClInclude Include="scene\Bullet\PlayerBullet.h" />
-    <ClInclude Include="scene\Collider\Collider.h" />
-    <ClInclude Include="scene\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="scene\Enemy\Enemy.h" />
-    <ClInclude Include="scene\Player\Player.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="scene\GameScene.h" />
-    <ClInclude Include="scene\RailCamera\RailCamera.h" />
-    <ClInclude Include="scene\Skydome\Skydome.h" />
-    <ClInclude Include="scene\TimedCall\TimedCall.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
