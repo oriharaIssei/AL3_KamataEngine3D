@@ -3,12 +3,13 @@
 #include "DirectXCommon.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
+#include "lib/GlobalVariables/GlobalVariables.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
 	// 汎用機能
@@ -29,7 +30,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region 汎用機能初期化
 	// ImGuiの初期化
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(win, dxCommon);
+	imguiManager->Initialize(win,dxCommon);
 
 	// 入力の初期化
 	input = Input::GetInstance();
@@ -44,7 +45,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::Load("white1x1.png");
 
 	// スプライト静的初期化
-	Sprite::StaticInitialize(dxCommon->GetDevice(), WinApp::kWindowWidth, WinApp::kWindowHeight);
+	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kWindowWidth,WinApp::kWindowHeight);
 
 	// 3Dモデル静的初期化
 	Model::StaticInitialize();
@@ -55,6 +56,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	primitiveDrawer = PrimitiveDrawer::GetInstance();
 	primitiveDrawer->Initialize();
+
+	GlobalVariables* variables = GlobalVariables::getInstance();
+	variables->LoadAllFile();
 #pragma endregion
 
 	// ゲームシーンの初期化
@@ -62,14 +66,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene->Initialize();
 
 	// メインループ
-	while (true) {
+	while(true){
 		// メッセージ処理
-		if (win->ProcessMessage()) {
+		if(win->ProcessMessage()){
 			break;
 		}
 
 		// ImGui受付開始
 		imguiManager->Begin();
+
+		variables->Update();
+
 		// 入力関連の毎フレーム処理
 		input->Update();
 		// ゲームシーンの毎フレーム処理
