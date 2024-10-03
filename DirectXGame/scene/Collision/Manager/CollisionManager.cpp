@@ -1,6 +1,6 @@
 #include "CollisionManager.h"
 
-#include "GlobalVariables.h"
+#include "lib/GlobalVariables/GlobalVariables.h"
 
 void CollisionManager::Init(){
 	model_.reset(Model::CreateSphere());

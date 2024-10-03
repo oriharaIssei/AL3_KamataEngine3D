@@ -12,11 +12,10 @@ struct PartsModel {
 		model.reset(parts);
 		worldTransform.Initialize();
 	}
-	std::unique_ptr<Model> model;
-
-	WorldTransform worldTransform;
-
-	void Draw(const ViewProjection &viewProj) {
+	void Draw(const ViewProjection& viewProj){
 		model->Draw(worldTransform,viewProj);
 	}
+
+	std::unique_ptr<Model> model;
+	WorldTransform worldTransform;
 };
