@@ -5,7 +5,6 @@
 #include "AxisIndicator.h"
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
-#include "myMath.h"
 
 GameScene::GameScene(){}
 
