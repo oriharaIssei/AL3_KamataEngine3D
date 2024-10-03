@@ -8,23 +8,23 @@ void CollisionManager::Init(){
 	GlobalVariables::getInstance()->addValue("CollisionManager","isDrawColliders_",isDrawColliders_);
 }
 
-void CollisionManager::Draw(const ViewProjection &viewProj){
+void CollisionManager::Draw(const ViewProjection& viewProj){
 	if(!isDrawColliders_){
 		return;
 	}
-	for(auto &collider : colliders_){
+	for(auto& collider : colliders_){
 		collider->Draw(model_.get(),viewProj);
 	}
 }
 
 void CollisionManager::Update(){
-	for(auto aItr = colliders_.begin(); aItr != colliders_.end(); ++aItr){
-		Collider *a = *aItr;
+	for(auto aItr = colliders_.begin(); aItr != colliders_.end();){
+		Collider* a = *aItr;
 
-		std::list<Collider *>::iterator bItr = aItr;
+		std::list<Collider*>::iterator bItr = aItr;
 		++bItr;// aItr の次
 		for(; bItr != colliders_.end(); ++bItr){
-			Collider *b = *bItr;
+			Collider* b = *bItr;
 
 			if(CheckCollisionPair(a,b)){
 				a->OnCollision(b);
@@ -34,7 +34,7 @@ void CollisionManager::Update(){
 	}
 }
 
-bool CollisionManager::CheckCollisionPair(const Collider *a,const Collider *b){
+bool CollisionManager::CheckCollisionPair(const Collider* a,const Collider* b){
 	if((a->getPosition() - b->getPosition()).lenghtSq() <= a->getRadius() + b->getRadius() * (a->getRadius() + b->getRadius())){
 		return true;
 	}
